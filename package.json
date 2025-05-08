@@ -1,5 +1,5 @@
 {
-  "name": "vite-admin-server",
+  "name": "vite-admin-server1",
   "version": "1.0.4",
   "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB -Auth0 Integration",
   "main": "server.js",
