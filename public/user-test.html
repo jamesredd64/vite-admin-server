@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User API Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 20px auto; 
+            padding: 0 20px; 
+        }
+        .section { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px;
+        }
+        .response {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+        }
+        input, textarea {
+            margin: 5px 0;
+            padding: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>User API Test Page</h1>
+
+    <div class="section">
+        <h2>Create/Update User</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="createEmail" required>
+        </div>
+        <div class="form-group">
+            <label>First Name:</label>
+            <input type="text" id="createFirstName" required>
+        </div>
+        <div class="form-group">
+            <label>Last Name:</label>
+            <input type="text" id="createLastName" required>
+        </div>
+        <div class="form-group">
+            <label>Phone Number:</label>
+            <input type="text" id="createPhone">
+        </div>
+        
+        <!-- Profile Fields -->
+        <h3>Profile</h3>
+        <div class="form-group">
+            <label>Date of Birth:</label>
+            <input type="date" id="dateOfBirth">
+        </div>
+        <div class="form-group">
+            <label>Gender:</label>
+            <input type="text" id="gender">
+        </div>
+        <div class="form-group">
+            <label>Profile Picture URL:</label>
+            <input type="url" id="profilePictureUrl">
+        </div>
+        
+        <!-- Marketing Budget -->
+        <h3>Marketing Budget</h3>
+        <div class="form-group">
+            <label>Amount:</label>
+            <input type="number" id="marketingAmount">
+        </div>
+        <div class="form-group">
+            <label>Frequency:</label>
+            <select id="marketingFrequency">
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="yearly">Yearly</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Ad Costs:</label>
+            <input type="number" id="adCosts">
+        </div>
+        
+        <!-- Address Fields -->
+        <h3>Address</h3>
+        <div class="form-group">
+            <label>Street:</label>
+            <input type="text" id="street">
+        </div>
+        <div class="form-group">
+            <label>City:</label>
+            <input type="text" id="city">
+        </div>
+        <div class="form-group">
+            <label>State:</label>
+            <input type="text" id="state">
+        </div>
+        <div class="form-group">
+            <label>Zip Code:</label>
+            <input type="text" id="zipCode">
+        </div>
+        <div class="form-group">
+            <label>Country:</label>
+            <input type="text" id="country">
+        </div>
+        
+        <button onclick="createOrUpdateUser()">Create/Update User</button>
+        <div id="createResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Get All Users</h2>
+        <button onclick="getAllUsers()">Get All</button>
+        <div id="getAllResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Get User by ID</h2>
+        <input type="text" id="getUserId" placeholder="User ID">
+        <button onclick="getUserById()">Get User</button>
+        <div id="getByIdResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Update User</h2>
+        <input type="text" id="updateId" placeholder="User ID">
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="updateEmail">
+        </div>
+        <div class="form-group">
+            <label>First Name:</label>
+            <input type="text" id="updateFirstName">
+        </div>
+        <div class="form-group">
+            <label>Last Name:</label>
+            <input type="text" id="updateLastName">
+        </div>
+        <button onclick="updateUser()">Update User</button>
+        <div id="updateResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Delete User</h2>
+        <input type="text" id="deleteId" placeholder="User ID">
+        <button onclick="deleteUser()">Delete User</button>
+        <div id="deleteResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Delete All Users</h2>
+        <button onclick="deleteAllUsers()">Delete All</button>
+        <div id="deleteAllResponse" class="response"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3007/api/users';
+
+        function showResponse(elementId, data) {
+            const element = document.getElementById(elementId);
+            if (data.error) {
+                element.innerHTML = `Error: ${data.message}`;
+                element.className = 'response error';
+            } else if (data.operation) {
+                const action = data.operation === 'created' ? 'Created' : 'Updated';
+                element.innerHTML = `${action} user: ${data.user.firstName} ${data.user.lastName}`;
+                element.className = 'response success';
+            } else {
+                element.innerHTML = JSON.stringify(data, null, 2);
+                element.className = 'response success';
+            }
+        }
+
+        async function fetchAPI(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        ...options.headers
+                    }
+                });
+                
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("Server response was not JSON");
+                }
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error("API Error:", error);
+                throw error;
+            }
+        }
+
+        async function createUser() {
+            try {
+                const data = {
+                    email: document.getElementById('createEmail').value,
+                    firstName: document.getElementById('createFirstName').value,
+                    lastName: document.getElementById('createLastName').value,
+                    phoneNumber: document.getElementById('createPhone').value
+                };
+
+                const response = await fetchAPI(`${API_URL}/createOrUpdate`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                showResponse('createResponse', response);
+            } catch (error) {
+                showResponse('createResponse', { 
+                    error: true, 
+                    message: error.message 
+                });
+            }
+        }
+
+        async function getAllUsers() {
+            const response = await fetchAPI(API_URL);
+            showResponse('getAllResponse', response);
+        }
+
+        async function getUserById() {
+            const id = document.getElementById('getUserId').value;
+            const response = await fetchAPI(`${API_URL}/${id}`);
+            showResponse('getByIdResponse', response);
+        }
+
+        async function updateUser() {
+            const data = {
+                email: document.getElementById('updateEmail').value,
+                firstName: document.getElementById('updateFirstName').value,
+                lastName: document.getElementById('updateLastName').value
+            };
+            try {
+                const response = await fetchAPI(`${API_URL}/createOrUpdate`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                showResponse('updateResponse', response);
+            } catch (error) {
+                showResponse('updateResponse', { error: error.message });
+            }
+        }
+
+        async function deleteUser() {
+            const id = document.getElementById('deleteId').value;
+            const response = await fetchAPI(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            });
+            showResponse('deleteResponse', response);
+        }
+
+        async function deleteAllUsers() {
+            const response = await fetchAPI(API_URL, {
+                method: 'DELETE'
+            });
+            showResponse('deleteAllResponse', response);
+        }
+
+        async function createOrUpdateUser() {
+            try {
+                const data = {
+                    email: document.getElementById('createEmail').value,
+                    firstName: document.getElementById('createFirstName').value,
+                    lastName: document.getElementById('createLastName').value,
+                    phoneNumber: document.getElementById('createPhone').value,
+                    
+                    // Profile fields
+                    dateOfBirth: document.getElementById('dateOfBirth').value,
+                    gender: document.getElementById('gender').value,
+                    profilePictureUrl: document.getElementById('profilePictureUrl').value,
+                    
+                    // Marketing Budget
+                    marketingAmount: document.getElementById('marketingAmount').value,
+                    marketingFrequency: document.getElementById('marketingFrequency').value,
+                    adCosts: document.getElementById('adCosts').value,
+                    
+                    // Address fields
+                    street: document.getElementById('street').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    zipCode: document.getElementById('zipCode').value,
+                    country: document.getElementById('country').value
+                };
+
+                const response = await fetchAPI(`${API_URL}/createOrUpdate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                showResponse('createResponse', response);
+            } catch (error) {
+                showResponse('createResponse', { 
+                    error: true, 
+                    message: error.message 
+                });
+            }
+        }
+    </script>
+</body>
+</html>

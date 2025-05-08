@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "67fb29b2ed61af40728831d8"
+  },
+  "auth0Id": "auth0|67bb70c5eedb5c4b0ea1ec93",
+  "title": "super",
+  "message": "hjkh",
+  "type": "selected",
+  "recipients": [
+    "67f49197c34847655c30d842"
+  ],
+  "createdBy": "auth0|67bb70c5eedb5c4b0ea1ec93",
+  "read": [],
+  "createdAt": {
+    "$date": "2025-04-13T03:04:18.006Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-13T03:04:18.006Z"
+  },
+  "__v": 0
+}]

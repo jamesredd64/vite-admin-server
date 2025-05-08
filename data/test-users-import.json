@@ -1,0 +1,102 @@
+[
+    {
+      "auth0Id": "auth0|67bb70c5eedb5c4b0ea1ec93",
+      "email": "jameshredd@outlook.com",
+      "firstName": "James",
+      "lastName": "Redd",
+      "phoneNumber": "555-012-1515",
+      "marketingBudget": {
+        "adBudget": 15000,
+        "costPerAcquisition": 75,
+        "dailySpendingLimit": 500,
+        "marketingChannels": "Facebook, Google Ads, LinkedIn",
+        "monthlyBudget": 15000,
+        "preferredPlatforms": "Meta, Google",
+        "notificationPreferences": ["email", "sms"],
+        "roiTarget": 300,
+        "frequency": "monthly"
+      },
+      "profile": {
+        "dateOfBirth": "1964-02-02",
+        "gender": "Male",
+        "profilePictureUrl": "https://randomuser.me/api/portraits/men/1.jpg"
+      },
+      "address": {
+        "street": "123 Tech Lane",
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": "78701",
+        "country": "USA"
+      },
+      "isActive": true,
+      "createdAt": "2024-02-20T00:00:00.000Z",
+      "updatedAt": "2024-03-19T00:00:00.000Z"
+    },
+    {
+      "auth0Id": "auth0|test_user_2",
+      "email": "sarah.johnson@test.com",
+      "firstName": "Sarah",
+      "lastName": "Johnson",
+      "phoneNumber": "555-0456",
+      "marketingBudget": {
+        "adBudget": 10000,
+        "costPerAcquisition": 50,
+        "dailySpendingLimit": 350,
+        "marketingChannels": "Instagram, TikTok",
+        "monthlyBudget": 10000,
+        "preferredPlatforms": "Meta, TikTok",
+        "notificationPreferences": ["email"],
+        "roiTarget": 250,
+        "frequency": "quarterly"
+      },
+      "profile": {
+        "dateOfBirth": "1988-06-22",
+        "gender": "Female",
+        "profilePictureUrl": "https://randomuser.me/api/portraits/women/2.jpg"
+      },
+      "address": {
+        "street": "456 Marketing Ave",
+        "city": "San Francisco",
+        "state": "CA",
+        "zipCode": "94105",
+        "country": "USA"
+      },
+      "isActive": true,
+      "createdAt": "2024-03-01T00:00:00.000Z",
+      "updatedAt": "2024-03-19T00:00:00.000Z"
+    },
+    {
+      "auth0Id": "auth0|test_user_3",
+      "email": "michael.chen@test.com",
+      "firstName": "Michael",
+      "lastName": "Chen",
+      "phoneNumber": "555-0789",
+      "marketingBudget": {
+        "adBudget": 20000,
+        "costPerAcquisition": 100,
+        "dailySpendingLimit": 700,
+        "marketingChannels": "LinkedIn, Google Ads",
+        "monthlyBudget": 20000,
+        "preferredPlatforms": "LinkedIn, Google",
+        "notificationPreferences": ["email", "push"],
+        "roiTarget": 400,
+        "frequency": "monthly"
+      },
+      "profile": {
+        "dateOfBirth": "1992-03-30",
+        "gender": "Male",
+        "profilePictureUrl": "https://randomuser.me/api/portraits/men/3.jpg"
+      },
+      "address": {
+        "street": "789 Innovation Blvd",
+        "city": "Seattle",
+        "state": "WA",
+        "zipCode": "98101",
+        "country": "USA"
+      },
+      "isActive": true,
+      "createdAt": "2024-03-05T00:00:00.000Z",
+      "updatedAt": "2024-03-19T00:00:00.000Z"
+    }
+  ]
+  

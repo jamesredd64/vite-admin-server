@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial API Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 20px auto; 
+            padding: 0 20px; 
+        }
+        .section { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px;
+        }
+        .response {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+        }
+        input, textarea {
+            margin: 5px 0;
+            padding: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tutorial API Test Page</h1>
+
+    <div class="section">
+        <h2>Create Tutorial</h2>
+        <input type="text" id="createTitle" placeholder="Title">
+        <textarea id="createDescription" placeholder="Description"></textarea>
+        <input type="checkbox" id="createPublished"> Published
+        <button onclick="createTutorial()">Create Tutorial</button>
+        <div id="createResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Get All Tutorials</h2>
+        <button onclick="getAllTutorials()">Get All</button>
+        <div id="getAllResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Get Published Tutorials</h2>
+        <button onclick="getPublishedTutorials()">Get Published</button>
+        <div id="getPublishedResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Get Tutorial by ID</h2>
+        <input type="text" id="getTutorialId" placeholder="Tutorial ID">
+        <button onclick="getTutorialById()">Get Tutorial</button>
+        <div id="getByIdResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Update Tutorial</h2>
+        <input type="text" id="updateId" placeholder="Tutorial ID">
+        <input type="text" id="updateTitle" placeholder="New Title">
+        <textarea id="updateDescription" placeholder="New Description"></textarea>
+        <input type="checkbox" id="updatePublished"> Published
+        <button onclick="updateTutorial()">Update Tutorial</button>
+        <div id="updateResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Delete Tutorial</h2>
+        <input type="text" id="deleteId" placeholder="Tutorial ID">
+        <button onclick="deleteTutorial()">Delete Tutorial</button>
+        <div id="deleteResponse" class="response"></div>
+    </div>
+
+    <div class="section">
+        <h2>Delete All Tutorials</h2>
+        <button onclick="deleteAllTutorials()">Delete All</button>
+        <div id="deleteAllResponse" class="response"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api/tutorials';
+
+        function showResponse(elementId, data) {
+            document.getElementById(elementId).textContent = 
+                typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+        }
+
+        async function fetchAPI(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                return `Error: ${error.message}`;
+            }
+        }
+
+        async function createTutorial() {
+            const data = {
+                title: document.getElementById('createTitle').value,
+                description: document.getElementById('createDescription').value,
+                published: document.getElementById('createPublished').checked
+            };
+            const response = await fetchAPI(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            showResponse('createResponse', response);
+        }
+
+        async function getAllTutorials() {
+            const response = await fetchAPI(API_URL);
+            showResponse('getAllResponse', response);
+        }
+
+        async function getPublishedTutorials() {
+            const response = await fetchAPI(`${API_URL}/published`);
+            showResponse('getPublishedResponse', response);
+        }
+
+        async function getTutorialById() {
+            const id = document.getElementById('getTutorialId').value;
+            const response = await fetchAPI(`${API_URL}/${id}`);
+            showResponse('getByIdResponse', response);
+        }
+
+        async function updateTutorial() {
+            const id = document.getElementById('updateId').value;
+            const data = {
+                title: document.getElementById('updateTitle').value,
+                description: document.getElementById('updateDescription').value,
+                published: document.getElementById('updatePublished').checked
+            };
+            const response = await fetchAPI(`${API_URL}/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            });
+            showResponse('updateResponse', response);
+        }
+
+        async function deleteTutorial() {
+            const id = document.getElementById('deleteId').value;
+            const response = await fetchAPI(`${API_URL}/${id}`, {
+                method: 'DELETE'
+            });
+            showResponse('deleteResponse', response);
+        }
+
+        async function deleteAllTutorials() {
+            const response = await fetchAPI(API_URL, {
+                method: 'DELETE'
+            });
+            showResponse('deleteAllResponse', response);
+        }
+    </script>
+</body>
+</html>

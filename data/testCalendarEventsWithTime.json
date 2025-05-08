@@ -1,0 +1,74 @@
+{
+  "events": [
+    {
+      "title": "Weekly Team Sync",
+      "start": "2024-03-25T14:30:00.000Z",
+      "end": "2024-03-25T15:30:00.000Z",
+      "startTime": "14:30",
+      "endTime": "15:30",
+      "allDay": false,
+      "auth0Id": "auth0|67bb70c5eedb5c4b0ea1ec93",
+      "extendedProps": {
+        "calendar": "primary",
+        "description": "Regular team sync meeting to discuss progress and blockers",
+        "location": "Virtual Meeting Room 1"
+      }
+    },
+    {
+      "title": "Client Workshop",
+      "start": "2024-03-26T09:00:00.000Z",
+      "end": "2024-03-26T12:00:00.000Z",
+      "startTime": "09:00",
+      "endTime": "12:00",
+      "allDay": false,
+      "auth0Id": "auth0|123456789",
+      "extendedProps": {
+        "calendar": "success",
+        "description": "Product requirements workshop with major client",
+        "location": "Conference Room A"
+      }
+    },
+    {
+      "title": "System Deployment",
+      "start": "2024-03-27T18:00:00.000Z",
+      "end": "2024-03-27T20:00:00.000Z",
+      "startTime": "18:00",
+      "endTime": "20:00",
+      "allDay": false,
+      "auth0Id": "auth0|987654321",
+      "extendedProps": {
+        "calendar": "danger",
+        "description": "Production deployment of new features",
+        "location": "Remote"
+      }
+    },
+    {
+      "title": "Company Holiday",
+      "start": "2024-03-29T00:00:00.000Z",
+      "end": "2024-03-29T23:59:59.999Z",
+      "startTime": "00:00",
+      "endTime": "23:59",
+      "allDay": true,
+      "auth0Id": "auth0|123456789",
+      "extendedProps": {
+        "calendar": "success",
+        "description": "Annual company holiday",
+        "location": "N/A"
+      }
+    },
+    {
+      "title": "Budget Planning",
+      "start": "2024-03-28T13:00:00.000Z",
+      "end": "2024-03-28T14:30:00.000Z",
+      "startTime": "13:00",
+      "endTime": "14:30",
+      "allDay": false,
+      "auth0Id": "auth0|987654321",
+      "extendedProps": {
+        "calendar": "warning",
+        "description": "Q2 budget planning session",
+        "location": "Finance Department"
+      }
+    }
+  ]
+}

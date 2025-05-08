@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Notification",
+  "description": "Schema for notification data model",
+  "type": "object",
+  "required": ["title", "message", "type", "createdBy"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title of the notification"
+    },
+    "message": {
+      "type": "string",
+      "description": "Content of the notification"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["all", "selected"],
+      "default": "all",
+      "description": "Type of notification distribution"
+    },
+    "recipients": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "User ID of recipient"
+      },
+      "description": "List of specific user IDs to receive the notification"
+    },
+    "read": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["userId"],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User ID who read the notification"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when notification was read"
+          }
+        }
+      },
+      "description": "List of users who have read the notification"
+    },
+    "createdBy": {
+      "type": "string",
+      "description": "User ID of notification creator"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of notification creation"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last update"
+    }
+  },
+  "additionalProperties": false
+}

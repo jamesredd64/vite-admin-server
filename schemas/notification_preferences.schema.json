@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NotificationPreferences",
+  "description": "Schema for user notification preferences",
+  "type": "object",
+  "required": ["userId"],
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "User ID these preferences belong to"
+    },
+    "email": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to receive email notifications"
+    },
+    "push": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to receive push notifications"
+    },
+    "sms": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to receive SMS notifications"
+    },
+    "categories": {
+      "type": "object",
+      "properties": {
+        "marketing": {
+          "type": "boolean",
+          "default": true,
+          "description": "Receive marketing related notifications"
+        },
+        "system": {
+          "type": "boolean",
+          "default": true,
+          "description": "Receive system notifications"
+        },
+        "updates": {
+          "type": "boolean",
+          "default": true,
+          "description": "Receive update notifications"
+        }
+      }
+    },
+    "frequency": {
+      "type": "string",
+      "enum": ["immediate", "daily", "weekly"],
+      "default": "immediate",
+      "description": "Frequency of notification delivery"
+    },
+    "quietHours": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "start": {
+          "type": "string",
+          "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+          "description": "Start time in HH:MM format"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+          "description": "End time in HH:MM format"
+        }
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of preference creation"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last update"
+    }
+  },
+  "additionalProperties": false
+}

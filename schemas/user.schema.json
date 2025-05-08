@@ -1,0 +1,191 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User",
+  "description": "Schema for user data model",
+  "type": "object",
+  "required": ["auth0Id", "email"],
+  "properties": {
+    "auth0Id": {
+      "type": "string",
+      "description": "Unique identifier from Auth0"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "User's email address"
+    },
+    "firstName": {
+      "type": "string",
+      "description": "User's first name"
+    },
+    "lastName": {
+      "type": "string",
+      "description": "User's last name"
+    },
+    "phoneNumber": {
+      "type": "string",
+      "description": "User's phone number"
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date-time",
+          "description": "User's date of birth"
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female", "other", "prefer_not_to_say"],
+          "description": "User's gender"
+        },
+        "profilePictureUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to user's profile picture"
+        },
+        "marketingBudget": {
+          "type": "object",
+          "properties": {
+            "adBudget": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "description": "Advertising budget amount"
+            },
+            "costPerAcquisition": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "description": "Cost per customer acquisition"
+            },
+            "dailySpendingLimit": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "description": "Daily spending limit"
+            },
+            "marketingChannels": {
+              "type": "string",
+              "default": "",
+              "description": "Comma-separated list of marketing channels"
+            },
+            "monthlyBudget": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "description": "Monthly marketing budget"
+            },
+            "preferredPlatforms": {
+              "type": "string",
+              "default": "",
+              "description": "Comma-separated list of preferred marketing platforms"
+            },
+            "notificationPreferences": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [],
+              "description": "List of notification preferences"
+            },
+            "roiTarget": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "description": "Target return on investment percentage"
+            },
+            "frequency": {
+              "type": "string",
+              "enum": ["daily", "monthly", "quarterly", "yearly"],
+              "default": "monthly",
+              "description": "Frequency of budget allocation"
+            }
+          }
+        },
+        "timezone": {
+          "type": "string",
+          "description": "User's timezone (IANA timezone identifier)",
+          "default": "America/New_York"
+        }
+      }
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string",
+          "description": "Street address"
+        },
+        "city": {
+          "type": "string",
+          "description": "City"
+        },
+        "state": {
+          "type": "string",
+          "description": "State or province"
+        },
+        "zipCode": {
+          "type": "string",
+          "description": "Postal or ZIP code"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country"
+        }
+      }
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "enum": ["light", "dark"],
+          "default": "light",
+          "description": "UI theme preference"
+        },
+        "notifications": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "boolean",
+              "default": true,
+              "description": "Email notification preference"
+            },
+            "push": {
+              "type": "boolean",
+              "default": true,
+              "description": "Push notification preference"
+            },
+            "sms": {
+              "type": "boolean",
+              "default": false,
+              "description": "SMS notification preference"
+            }
+          }
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "description": "Preferred language"
+        }
+      }
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "User account status"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of user creation"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last update"
+    }
+  },
+  "additionalProperties": false
+}
