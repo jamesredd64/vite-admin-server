@@ -18,8 +18,6 @@ const staticMiddleware = require('./middleware/static.middleware');
 const VERSION = require('./config/version');
 const { startEventInvitationScheduler } = require('./schedulers/autoEventInvitation');
 const adminSettingsRoutes = require('./routes/admin.settings.routes');
-// const calendarRoutes = require('./routes/calendar');
-
 
 // Add this to your server startup code, after MongoDB connection is established
 // startEventInvitationScheduler();
