@@ -97,8 +97,8 @@ async function processNewUsers() {
   }
 }
 
-
 // Create cron jobs to run twice daily
+
 // const morningJob = new CronJob('0 9 * * *', () => {
 //   console.log('\n🌅 Starting auto event invitation check...');
 //   processNewUsers();
@@ -110,13 +110,14 @@ async function processNewUsers() {
 // });
 // Create cron jobs to run twice daily
 // For testing: Run every minute
-const morningJob = new CronJob('*/20 * * * *', () => {
+
+const morningJob = new CronJob('*/60 * * * *', () => {
   console.log('\n🌅 Starting auto event invitation check...');
   processNewUsers();
 });
 
 // For testing: Run every 2 minutes
-const afternoonJob = new CronJob('*/20 * * * *', () => {
+const afternoonJob = new CronJob('*/60 * * * *', () => {
   console.log('\n🌇 Starting auto event invitation check...');
   processNewUsers();
 });
