@@ -91,7 +91,8 @@ router.put('/:auth0Id', async (req, res) => {
           firstName: updates.firstName,
           lastName: updates.lastName,
           phoneNumber: updates.phoneNumber,
-          profile: updates.profile
+          profile: updates.profile,
+          isActive: updates.isActive
         };
         break;
       case 'address':

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { CronJob } = require('cron');
 const ScheduledEvent = require('../models/scheduledEvent');
 const User = require('../models/user');
-const { sendEventInvitation } = require('../routes/email.routes');
+const { sendEventInvitationCore } = require('../controllers/email.controller');
 const { generateICalEvent } = require('../utils/ical.utils');
 
 // Schema for tracking invitation metadata
@@ -78,7 +78,7 @@ async function processNewUsers() {
             }
           };
 
-          await sendEventInvitation(eventDetails, mailOptions);
+          await sendEventInvitationCore(eventDetails, mailOptions);
           metadata.processedUserIds.push(user._id);
           console.log(`✅ Successfully sent invitation to ${user.email}`);
         } catch (error) {
@@ -99,27 +99,27 @@ async function processNewUsers() {
 
 
 // Create cron jobs to run twice daily
-const morningJob = new CronJob('0 9 * * *', () => {
-  console.log('\n🌅 Starting auto event invitation check...');
-  processNewUsers();
-});
-
-const afternoonJob = new CronJob('0 15 * * *', () => {
-  console.log('\n🌇 Starting auto event invitation check...');
-  processNewUsers();
-});
-// Create cron jobs to run twice daily
-// For testing: Run every minute
-// const morningJob = new CronJob('* * * * *', () => {
+// const morningJob = new CronJob('0 9 * * *', () => {
 //   console.log('\n🌅 Starting auto event invitation check...');
 //   processNewUsers();
 // });
 
-// // For testing: Run every 2 minutes
-// const afternoonJob = new CronJob('*/2 * * * *', () => {
+// const afternoonJob = new CronJob('0 15 * * *', () => {
 //   console.log('\n🌇 Starting auto event invitation check...');
 //   processNewUsers();
 // });
+// Create cron jobs to run twice daily
+// For testing: Run every minute
+const morningJob = new CronJob('*/20 * * * *', () => {
+  console.log('\n🌅 Starting auto event invitation check...');
+  processNewUsers();
+});
+
+// For testing: Run every 2 minutes
+const afternoonJob = new CronJob('*/20 * * * *', () => {
+  console.log('\n🌇 Starting auto event invitation check...');
+  processNewUsers();
+});
 
 function startEventInvitationScheduler() {
   morningJob.start();

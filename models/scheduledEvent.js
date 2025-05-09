@@ -5,6 +5,7 @@ if (mongoose.models.ScheduledEvent) {
   module.exports = mongoose.models.ScheduledEvent;
 } else {
   const scheduledEventSchema = new mongoose.Schema({
+    sequence: Number,
     eventDetails: {
       startTime: Date,
       endTime: Date,

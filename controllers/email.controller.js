@@ -197,39 +197,43 @@ exports.sendBulkEmails = async (req, res) => {
   }
 };
 
+const sendEventInvitationLogic = async (eventData, mailOptions) => {
+  if (!eventData || !mailOptions) {
+    return res.status(400).json({
+        success: false,
+        message: 'Both eventData and mailOptions are required'
+    });
+}
+    const { startTime, endTime, summary, description, location, to } = eventData;
+
+    // Merge the event data into the mail options
+    const finalMailOptions = {
+        ...mailOptions,
+        from: process.env.EMAIL_USER,
+        icalEvent: {
+            filename: 'invitation.ics',
+            method: 'REQUEST',
+            content: generateICalEvent(eventData)
+        }
+    };
+
+    const info = await transporter.sendMail(finalMailOptions);
+    console.log('Event invitation sent successfully:', info.messageId);
+    return {
+        success: true,
+        message: `Invitation sent to ${to.email}`,
+        response: info.response,
+        messageId: info.messageId
+    };
+};
+
 exports.sendEventInvitation = async (req, res) => {
     try {
         const { eventData, mailOptions } = req.body;
-
-        if (!eventData || !mailOptions) {
-            return res.status(400).json({
-                success: false,
-                message: 'Both eventData and mailOptions are required'
-            });
-        }
-
-        const { startTime, endTime, summary, description, location, to } = eventData;
-
-        // Merge the event data into the mail options
-        const finalMailOptions = {
-            ...mailOptions,
-            from: process.env.EMAIL_USER,
-            icalEvent: {
-                filename: 'invitation.ics',
-                method: 'REQUEST',
-                content: generateICalEvent(eventData)
-            }
-        };
-
-        const info = await transporter.sendMail(finalMailOptions);
-        res.json({
-            success: true,
-            message: `Invitation sent to ${to.email}`,
-            response: info.response
-        });
-
+        const result = await sendEventInvitationLogic(eventData, mailOptions);
+        res.json(result);
     } catch (error) {
-        console.error('Error in sendEventInvitation:', error);
+        console.error('Error in sendEventInvitation route handler:', error);
         res.status(500).json({
             success: false,
             message: 'Failed to send invitation',
@@ -237,6 +241,9 @@ exports.sendEventInvitation = async (req, res) => {
         });
     }
 };
+
+// Export the core logic for use in other modules
+exports.sendEventInvitationCore = sendEventInvitationLogic;
 
 exports.sendBulkEventInvitations = async (req, res) => {
     try {

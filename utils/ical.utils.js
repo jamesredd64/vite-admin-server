@@ -20,6 +20,9 @@ DESCRIPTION:${event.description}
 LOCATION:${event.location}
 ORGANIZER;CN=${event.organizer?.name || 'Event Organizer'}:mailto:${event.organizer?.email || process.env.EMAIL_FROM}
 ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=${event.to.name || event.to.email}:mailto:${event.to.email}
+SEQUENCE:0
+STATUS:CONFIRMED
+TRANSP:OPAQUE
 END:VEVENT
 END:VCALENDAR`;
 }
