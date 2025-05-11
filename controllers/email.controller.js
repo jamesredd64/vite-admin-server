@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
+const User = require('../models/user.js'); // Import User model
 // const { generateICalEvent } = require('../utils/ical-generator');
 const ScheduledEventService = require('../services/scheduledEvents.service');
 
@@ -199,46 +200,61 @@ exports.sendBulkEmails = async (req, res) => {
 
 const sendEventInvitationLogic = async (eventData, mailOptions) => {
   if (!eventData || !mailOptions) {
-    return res.status(400).json({
-        success: false,
-        message: 'Both eventData and mailOptions are required'
-    });
-}
-    const { startTime, endTime, summary, description, location, to } = eventData;
+    throw new Error('Both eventData and mailOptions are required');
+  }
 
-    // Merge the event data into the mail options
-    const finalMailOptions = {
-        ...mailOptions,
-        from: process.env.EMAIL_USER,
-        icalEvent: {
-            filename: 'invitation.ics',
-            method: 'REQUEST',
-            content: generateICalEvent(eventData)
-        }
-    };
+  const { startTime, endTime, summary, description, location, to } = eventData;
 
-    const info = await transporter.sendMail(finalMailOptions);
-    console.log('Event invitation sent successfully:', info.messageId);
-    return {
-        success: true,
-        message: `Invitation sent to ${to.email}`,
-        response: info.response,
-        messageId: info.messageId
-    };
+  // Add validation for required eventData properties
+  const requiredFields = ['startTime', 'endTime', 'summary', 'description', 'location', 'to'];
+  const missingFields = requiredFields.filter(field => !eventData[field]);
+
+  if (missingFields.length > 0) {
+    throw new Error(`Missing required eventData fields: ${missingFields.join(', ')}`);
+  }
+  if (!to.email) {
+      throw new Error('Recipient email (to.email) is required in eventData');
+  }
+
+
+  // Merge the event data into the mail options
+  const finalMailOptions = {
+      ...mailOptions,
+      from: process.env.EMAIL_USER,
+      icalEvent: {
+          filename: 'invitation.ics',
+          method: 'REQUEST',
+          content: generateICalEvent(eventData)
+      }
+  };
+
+  const info = await transporter.sendMail(finalMailOptions);
+  console.log('Event invitation sent successfully:', info.messageId);
+  return {
+      success: true,
+      message: `Invitation sent to ${to.email}`,
+      response: info.response,
+      messageId: info.messageId
+  };
 };
 
 exports.sendEventInvitation = async (req, res) => {
     try {
-        const { eventData, mailOptions } = req.body;
-        const result = await sendEventInvitationLogic(eventData, mailOptions);
-        res.json(result);
+        // Delegate the request handling to the bulk send function
+        // The bulk send function expects eventDetails and attendees in req.body
+        // and handles sending the response.
+        await exports.sendBulkEventInvitations(req, res);
     } catch (error) {
         console.error('Error in sendEventInvitation route handler:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to send invitation',
-            error: error.message
-        });
+        // If sendBulkEventInvitations throws an error before sending a response,
+        // catch it here and send a 500 response.
+        if (!res.headersSent) {
+            res.status(500).json({
+                success: false,
+                message: 'Failed to send invitation',
+                error: error.message
+            });
+        }
     }
 };
 
@@ -248,15 +264,49 @@ exports.sendEventInvitationCore = sendEventInvitationLogic;
 exports.sendBulkEventInvitations = async (req, res) => {
     try {
         const { eventDetails, attendees } = req.body;
+        let recipients = attendees;
 
-        if (!Array.isArray(attendees) || attendees.length === 0) {
-            return res.status(400).json({
+        if (!Array.isArray(attendees)) {
+             return res.status(400).json({
                 success: false,
-                message: 'Recipients array is required and must not be empty'
+                message: 'Attendees must be an array'
             });
         }
 
-        const results = await Promise.all(attendees.map(async (to) => {
+        if (attendees.length === 0) {
+            console.log('Attendees list is empty, fetching all active users...');
+            try {
+                const activeUsers = await User.find({ isActive: true }).lean(); // Fetch active users
+                recipients = activeUsers.map(user => ({ // Map to expected format
+                    email: user.email,
+                    name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email
+                }));
+                console.log(`Fetched ${recipients.length} active users.`);
+            } catch (fetchError) {
+                console.error('Error fetching active users:', fetchError);
+                // Decide how to handle fetch error - either throw or return an error response
+                throw new Error('Failed to fetch active users for bulk sending');
+            }
+        } else {
+            console.log(`Sending bulk invitations to ${attendees.length} provided attendees.`);
+        }
+
+        if (recipients.length === 0) {
+             return res.status(200).json({
+                success: true,
+                message: 'No recipients found or selected, no emails sent.',
+                results: []
+            });
+        }
+
+
+        const results = await Promise.all(recipients.map(async (to) => {
+            // Basic validation for recipient object structure
+            if (!to || !to.email) {
+                 console.warn('Skipping invalid recipient:', to);
+                 return { email: to?.email || 'unknown', status: 'skipped', error: 'Invalid recipient format' };
+            }
+
             const eventDetailsWithAttendee = {
                 startTime: new Date(eventDetails.startTime),
                 endTime: new Date(eventDetails.endTime),
@@ -279,17 +329,27 @@ exports.sendBulkEventInvitations = async (req, res) => {
                 }
             };
 
-            const info = await transporter.sendMail(mailOptions);
-            return {
-                email: to.email,
-                status: 'sent',
-                response: info.response
-            };
+            try {
+                const info = await transporter.sendMail(mailOptions);
+                return {
+                    email: to.email,
+                    status: 'sent',
+                    response: info.response
+                };
+            } catch (sendError) {
+                 console.error(`Error sending email to ${to.email}:`, sendError);
+                 return { email: to.email, status: 'failed', error: sendError.message };
+            }
         }));
+
+        const successfulSends = results.filter(r => r.status === 'sent').length;
+        const failedSends = results.filter(r => r.status === 'failed').length;
+        const skippedRecipients = results.filter(r => r.status === 'skipped').length;
+
 
         res.json({
             success: true,
-            message: `Bulk invitations sent to ${attendees.length} recipients`,
+            message: `Bulk invitations process completed. Sent: ${successfulSends}, Failed: ${failedSends}, Skipped: ${skippedRecipients}`,
             results
         });
 
@@ -297,7 +357,7 @@ exports.sendBulkEventInvitations = async (req, res) => {
         console.error('Error in sendBulkEventInvitations:', error);
         res.status(500).json({
             success: false,
-            message: 'Failed to send bulk invitations',
+            message: 'Failed to process bulk invitations',
             error: error.message
         });
     }
@@ -350,7 +410,7 @@ exports.scheduleEventInvitation = async (req, res) => {
         console.error('Error in scheduleEventInvitation:', {
             error: error.message,
             stack: error.stack,
-            requestBody: req.body
+             requestBody: req.body
         });
         res.status(500).json({
             success: false,

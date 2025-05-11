@@ -219,7 +219,8 @@ app.use('/api/assets', assetsRoutes);
 app.use('/api/email', emailRoutes); // This is correct
 app.use('/api/admin', adminSettingsRoutes);
 app.use("/api/events", scheduledEventsRoutes);
-app.use("/api/event-invitation", emailRoutes);
+// app.use("/api/event-invitation", emailRoutes);
+app.use('/api/email/event-invitation', emailRoutes); // This is correct
 app.use("/api", scheduledEventsRoutes);
 
 // Error handling middleware
