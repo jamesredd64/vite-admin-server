@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user.js');
 const userController = require('../controllers/user.controller.js');
+// const formController = require('../controllers/formController.js');
  const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 // Add request logging
@@ -9,6 +10,11 @@ router.use((req, res, next) => {
   console.log('User Route:', req.method, req.url);
   next();
 });
+
+// Form Submits
+// router.post('/submit-form', requireAuth, formController.submitForm);
+
+
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -76,54 +82,10 @@ router.post('/', async (req, res) => {
 });
 
 // Update user by auth0Id
-router.put('/:auth0Id', async (req, res) => {
-  const { auth0Id } = req.params;
-  const { section } = req.query;
-  const updates = req.body;
-
-  try {
-    let updateQuery = {};
-
-    switch (section) {
-      case 'meta':
-        updateQuery = {
-          email: updates.email,
-          firstName: updates.firstName,
-          lastName: updates.lastName,
-          phoneNumber: updates.phoneNumber,
-          profile: updates.profile,
-          isActive: updates.isActive
-        };
-        break;
-      case 'address':
-        updateQuery = { address: updates.address };
-        break;
-      case 'marketing':
-        updateQuery = { marketingBudget: updates.marketingBudget };
-        break;
-      default:
-        // If no section specified, update all fields
-        updateQuery = updates;
-    }
-
-    const updatedUser = await User.findOneAndUpdate(
-      { auth0Id },
-      { $set: updateQuery },
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.json(updatedUser);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.put('/:auth0Id', userController.updateUser);
 
 // Save user data
-router.put('/:auth0Id/save', userController.saveUserData);
+router.put('/:auth0Id/save', userController.updateUser);
 
 // Add new lookup routes
 router.get('/lookup', requireAuth, async (req, res) => {
@@ -214,6 +176,11 @@ router.get('/lookup/search', requireAuth, async (req, res) => {
 
 // Define the route to get user profile
 router.get("/users/:auth0Id/profile", userController.getUserProfileByAuth0Id);
+
+// Add routes for the renamed controller functions
+router.post('/createOrUpdate', userController.createOrUpdateUser);
+router.delete('/:id', userController.deleteUserById);
+router.delete('/', userController.deleteAllUsers);
 
 module.exports = router;
 

@@ -119,7 +119,13 @@ const userSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true,
-  }
+  },
+  formSubmissions: [
+    {
+      message: String,
+      submittedAt: { type: Date, default: Date.now },
+    }
+  ]
 }, {
   timestamps: true,
   collection: "users",
