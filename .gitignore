@@ -77,3 +77,6 @@ scripts/
 models/AdminCode.js
 models/schemas.js
 routes/admin.js
+
+.vercel
+.env*.local

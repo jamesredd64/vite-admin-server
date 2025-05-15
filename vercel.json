@@ -29,7 +29,7 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "server.js"
+      "destination": "/api/:path*"
     }
   ],
   "headers": [
