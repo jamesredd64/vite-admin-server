@@ -32,12 +32,12 @@ const submitForm = async (req, res) => {
     const updatedFormSubmission = await FormSubmission.findOneAndUpdate(
       { email }, // Look for submission by email
       {
-        firstName,
-        lastName,
-        email,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
         phoneNumber: phoneNumber || "",
         zipCode: zipCode || "",
-        eventDate,
+        eventDate: eventDate,
         submittedAt: new Date(),
         extendedProps: sanitizedExtendedProps,
       },
