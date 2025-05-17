@@ -18,17 +18,27 @@ const AutoInviteMetadata = mongoose.model('AutoInviteMetadata', autoInviteMetada
 async function processNewUsers() {
   console.log('🔄 Starting auto event invitation process:', new Date().toISOString());
   try {
-    // Find upcoming events
-    const upcomingEvents = await ScheduledEvent.find({
-      'eventDetails.startTime': { $gt: new Date() },
+    // Find all pending events (not filtering by startTime)
+    const pendingEvents = await ScheduledEvent.find({
       status: 'pending'
     });
 
-    console.log(`📅 Found ${upcomingEvents.length} upcoming events to process`);
+    console.log(`📅 Found ${pendingEvents.length} pending events to process`);
 
-    for (const event of upcomingEvents) {
+    for (const event of pendingEvents) {
       console.log(`\n🎯 Processing event: ${event.eventDetails.summary} (${event._id})`);
       
+      // Check if the event end date is more than one day in the past
+      const oneDayAfterEventEnd = new Date(event.eventDetails.endTime);
+      oneDayAfterEventEnd.setDate(oneDayAfterEventEnd.getDate() + 1);
+
+      if (oneDayAfterEventEnd < new Date()) {
+        console.log(`📅 Event "${event.eventDetails.summary}" is more than one day past its end date. Marking as completed.`);
+        event.status = 'completed';
+        await event.save();
+        continue; // Skip to the next event
+      }
+
       // Get or create metadata for this event
       let metadata = await AutoInviteMetadata.findOne({ eventId: event._id });
       if (!metadata) {
@@ -79,6 +89,17 @@ async function processNewUsers() {
           };
 
           await sendEventInvitationCore(eventDetails, mailOptions);
+
+          // Update the selectedUsers array in the ScheduledEvent document
+          await ScheduledEvent.findByIdAndUpdate(event._id, {
+            $push: {
+              selectedUsers: {
+                email: user.email,
+                name: `${user.firstName} ${user.lastName}`.trim()
+              }
+            }
+          });
+
           metadata.processedUserIds.push(user._id);
           console.log(`✅ Successfully sent invitation to ${user.email}`);
         } catch (error) {
@@ -95,38 +116,38 @@ async function processNewUsers() {
   } catch (error) {
     console.error('❌ Error in auto event invitation process:', error);
   }
-}
+    }
+    
+    // Create cron jobs to run twice daily
 
-// Create cron jobs to run twice daily
+    // const morningJob = new CronJob('0 9 * * *', () => {
+    //   console.log('\n🌅 Starting auto event invitation check...');
+    //   processNewUsers();
+    // });
 
-// const morningJob = new CronJob('0 9 * * *', () => {
-//   console.log('\n🌅 Starting auto event invitation check...');
-//   processNewUsers();
-// });
+    // const afternoonJob = new CronJob('0 15 * * *', () => {
+    //   console.log('\n🌇 Starting auto event invitation check...');
+    //   processNewUsers();
+    // });
+    // Create cron jobs to run twice daily
+    // For testing: Run every minute
 
-// const afternoonJob = new CronJob('0 15 * * *', () => {
-//   console.log('\n🌇 Starting auto event invitation check...');
-//   processNewUsers();
-// });
-// Create cron jobs to run twice daily
-// For testing: Run every minute
+    const morningJob = new CronJob('*/60 * * * *', () => {
+      console.log('\n🌅 Starting auto event invitation check...');
+      processNewUsers();
+    });
 
-const morningJob = new CronJob('*/60 * * * *', () => {
-  console.log('\n🌅 Starting auto event invitation check...');
-  processNewUsers();
-});
+    // For testing: Run every 2 minutes
+    const afternoonJob = new CronJob('*/60 * * * *', () => {
+      console.log('\n🌇 Starting auto event invitation check...');
+      processNewUsers();
+    });
 
-// For testing: Run every 2 minutes
-const afternoonJob = new CronJob('*/60 * * * *', () => {
-  console.log('\n🌇 Starting auto event invitation check...');
-  processNewUsers();
-});
+    function startEventInvitationScheduler() {
+      morningJob.start();
+      afternoonJob.start();
+      console.log('🚀 Event invitation scheduler started - Will run at 9 AM and 3 PM daily');
+    }
 
-function startEventInvitationScheduler() {
-  morningJob.start();
-  afternoonJob.start();
-  console.log('🚀 Event invitation scheduler started - Will run at 9 AM and 3 PM daily');
-}
-
-module.exports = { startEventInvitationScheduler };
+    module.exports = { startEventInvitationScheduler };
 

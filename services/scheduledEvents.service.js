@@ -82,8 +82,11 @@ class ScheduledEventService {
           await transporter.sendMail(mailOptions);
         }));
 
-        event.status = 'completed';
-        await event.save();
+       // Update selectedUsers with the actual list of users invited
+       event.selectedUsers = usersToInvite;
+
+       event.status = 'completed';
+       await event.save();
       } catch (error) {
         console.error('Error processing scheduled event:', error);
         event.status = 'failed';
@@ -125,9 +128,19 @@ class ScheduledEventService {
         await transporter.sendMail(mailOptions);
       }));
 
+      // Create a ScheduledEvent record for immediate sends
+      const scheduledEvent = new ScheduledEvent({
+        eventDetails: eventDetails,
+        scheduledTime: new Date(), // Set scheduled time to now for immediate sends
+        selectedUsers: usersToInvite, // Store the list of users who received the invitation
+        status: 'completed' // Mark as completed immediately
+      });
+      await scheduledEvent.save();
+
       return {
         success: true,
-        message: `Invitations sent to ${usersToInvite.length} users`
+        message: `Invitations sent to ${usersToInvite.length} users`,
+        scheduledEventId: scheduledEvent._id // Optionally return the ID of the created event
       };
     } catch (error) {
       console.error('Error sending immediate invitations:', error);

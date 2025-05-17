@@ -38,11 +38,12 @@
       "headers": [
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "https://vite-front-end.vercel.app" },
+        { "key": "Access-Control-Allow-Origin", "value": "https://your-webflow-site.com" },
         { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, Origin, Cache-Control, Pragma" },
         { "key": "Access-Control-Max-Age", "value": "86400" }
       ]
-    },
+    },    
     {
       "source": "/favicon.(ico|png)",
       "headers": [
