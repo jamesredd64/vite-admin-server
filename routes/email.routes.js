@@ -57,6 +57,9 @@ router.post('/event-invitation', emailController.sendEventInvitation);
 router.post('/bulk-event-invitation', emailController.sendBulkEventInvitations);
 router.get('/schedule-event-invitation', emailController.scheduleEventInvitation);
 router.post('/schedule-event-invitation', emailController.scheduleEventInvitation);
+// Email
+router.post('/email/sendBulkEmails', emailController.sendBulkEmails);
+
 
 module.exports = router;
 
