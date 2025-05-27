@@ -37,19 +37,19 @@ END:VCALENDAR`;
 }
 
 // Verify transporter configuration
-const verifyTransporter = async () => {
-  try {
-    await transporter.verify();
-    console.log('Transporter is ready to send emails!');
-    return true;
-  } catch (error) {
-    console.error('Email transporter verification failed:', error);
-    return false;
-  }
-};
+// const verifyTransporter = async () => {
+//   try {
+//     await transporter.verify();
+//     console.log('Transporter is ready to send emails!');
+//     return true;
+//   } catch (error) {
+//     console.error('Email transporter verification failed:', error);
+//     return false;
+//   }
+// };
 
-// Example usage:
-verifyTransporter();
+// // Example usage:
+// verifyTransporter();
 // const verifyTransporter = nodemailer.createTransport({
 //   host: "smtp.example.com",
 //   port: 587,
@@ -61,17 +61,17 @@ verifyTransporter();
 //   }
 // });
 
-// const verifyTransporter = async () => {
-//   try {
-//     await transporter.verify();
-//     return true;
-//   } catch (error) {
-//     console.error('Email transporter verification failed:', error);
-//     return false;
-//   }
-// };
+const verifyTransporter = async () => {
+  try {
+    await transporter.verify();
+    return true;
+  } catch (error) {
+    console.error('Email transporter verification failed:', error);
+    return false;
+  }
+};
 
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 
 // const transporter = nodemailer.createTransport({
 //   host: 'smtp.example.com', // Replace with your SMTP host
@@ -124,7 +124,7 @@ exports.sendEmail = async (req, res) => {
 
     const mailOptions = {
       from: {
-        name: process.env.EMAIL_FROM_NAME || 'Your Application Name',
+        name: process.env.EMAIL_FROM_NAME || 'vite-admin-server',
         address: process.env.EMAIL_FROM
       },
       to: Array.isArray(to) ? to : [to],
