@@ -19,20 +19,22 @@ const adminSettingsSchema = new mongoose.Schema({
   }],
   emailTemplates: {
     invitation: {
-      type: String,
-      required: true,
-      default: 'Welcome to our platform! Click here to get started: {{inviteLink}}'
+      subject: { type: String, required: true, default: 'Event Invitation' },
+      body: { type: String, required: true, default: 'Welcome to our platform! Click here to get started: {{inviteLink}}' }
     },
     reminder: {
-      type: String,
-      required: true,
-      default: 'Dont forget about your upcoming event: {{eventDetails}}'
+      subject: { type: String, required: true, default: 'Event Reminder' },
+      body: { type: String, required: true, default: 'Dont forget about your upcoming event: {{eventDetails}}' }
     },
     welcome: {
-      type: String,
-      required: true,
-      default: 'Thanks for joining! Heres what you need to know: {{welcomeInfo}}'
-    }
+      subject: { type: String, required: true, default: 'Welcome to the Platform!' },
+      body: { type: String, required: true, default: 'Thanks for joining! Heres what you need to know: {{welcomeInfo}}' }
+    },
+    // Allow for additional templates with subject and body
+    of: new mongoose.Schema({
+      subject: { type: String, required: true },
+      body: { type: String, required: true }
+    }, { _id: false }) // _id: false prevents Mongoose from adding _id to subdocuments
   },
   security: {
     sessionTimeout: {

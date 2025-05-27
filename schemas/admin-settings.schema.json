@@ -132,18 +132,65 @@
       "required": ["invitation", "reminder", "welcome"],
       "properties": {
         "invitation": {
-          "type": "string",
-          "minLength": 1
+          "type": "object",
+          "required": ["subject", "body"],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "body": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         },
         "reminder": {
-          "type": "string",
-          "minLength": 1
+          "type": "object",
+          "required": ["subject", "body"],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "body": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         },
         "welcome": {
-          "type": "string",
-          "minLength": 1
+          "type": "object",
+          "required": ["subject", "body"],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "body": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
-      }
+      },
+      "patternProperties": {
+        "^[a-zA-Z0-9_-]+$": {
+          "type": "object",
+          "required": ["subject", "body"],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "body": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "security": {
       "type": "object",

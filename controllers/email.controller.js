@@ -138,9 +138,9 @@ exports.getEmailConfig = async (req, res) => {
 
 exports.sendBulkEmails = async (req, res) => {
   try {
-    const { recipients, subject, body, attachments } = req.body;
+    const { emails, subject, body, attachments } = req.body;
 
-    if (!Array.isArray(recipients) || recipients.length === 0) {
+    if (!Array.isArray(emails) || emails.length === 0) {
       return res.status(400).json({
         error: 'Validation Error',
         message: 'Recipients array is required and must not be empty'
@@ -153,7 +153,7 @@ exports.sendBulkEmails = async (req, res) => {
       throw new Error('Email service not properly configured');
     }
 
-    const emailPromises = recipients.map(recipient => {
+    const emailPromises = emails.map(recipient => {
       const mailOptions = {
         from: {
           name: process.env.EMAIL_FROM_NAME || 'Your Application Name',
@@ -171,11 +171,11 @@ exports.sendBulkEmails = async (req, res) => {
     const results = await Promise.allSettled(emailPromises);
 
     const summary = {
-      total: recipients.length,
+      total: emails.length,
       successful: results.filter(r => r.status === 'fulfilled').length,
       failed: results.filter(r => r.status === 'rejected').length,
       details: results.map((result, index) => ({
-        recipient: recipients[index],
+        recipient: emails[index],
         status: result.status,
         messageId: result.status === 'fulfilled' ? result.value.messageId : null,
         error: result.status === 'rejected' ? result.reason.message : null,

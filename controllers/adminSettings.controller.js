@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const AdminSettings = require('../models/adminSettings');
+const AdminSettings = require('../models/adminSettings.js');
 
 // Initialize default admin settings
 const initializeDefaultSettings = async () => {
@@ -27,9 +27,18 @@ const initializeDefaultSettings = async () => {
       features: ['dashboard', 'users', 'settings']
     }],
     emailTemplates: {
-      invitation: 'Welcome to our platform! Click here to get started: {{inviteLink}}',
-      reminder: 'Dont forget about your upcoming event: {{eventDetails}}',
-      welcome: 'Thanks for joining! Here what you need to know: {{welcomeInfo}}'
+      invitation: {
+        subject: 'Event Invitation',
+        body: 'Welcome to our platform! Click here to get started: {{inviteLink}}'
+      },
+      reminder: {
+        subject: 'Event Reminder',
+        body: 'Dont forget about your upcoming event: {{eventDetails}}'
+      },
+      welcome: {
+        subject: 'Welcome to the Platform!',
+        body: 'Thanks for joining! Here what you need to know: {{welcomeInfo}}'
+      }
     },
     security: {
       sessionTimeout: 3600,
@@ -57,21 +66,38 @@ const initializeDefaultSettings = async () => {
 // Get admin settings
 exports.getAdminSettings = async (req, res) => {
   try {
-    console.log('Searching for admin settings...');
+    console.log('🔧 Admin Settings Controller - Request received');
+    console.log('🔍 Headers:', {
+      authorization: req.headers.authorization ? 'Present' : 'Missing',
+      'content-type': req.headers['content-type']
+    });
+
+    console.log('🔍 Query params:', req.query);
+    console.log('🔍 Body:', req.body);
+
+    console.log('🔍 Searching for admin settings...');
     let settings = await AdminSettings.findOne().lean();
     
     if (!settings) {
-      console.log('No settings found, initializing defaults...');
+      console.log('🔧 No settings found, initializing defaults...');
       const defaultSettings = await initializeDefaultSettings();
       settings = await defaultSettings.save();
     }
+
+    console.log('✅ Found settings:', settings);
 
     res.status(200).json({
       success: true,
       data: settings
     });
   } catch (error) {
-    console.error('Error in getAdminSettings:', error);
+    console.error('❌ Error in getAdminSettings:', error);
+    console.error('❌ Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
     res.status(500).json({
       success: false,
       message: 'Failed to fetch admin settings',

@@ -9,6 +9,7 @@ router.use((req, res, next) => {
 });
 
 // Service health check endpoint
+
 router.get('/bulk-event-invitation', (req, res) => {
   res.json({
     status: 'active',
@@ -57,6 +58,9 @@ router.post('/event-invitation', emailController.sendEventInvitation);
 router.post('/bulk-event-invitation', emailController.sendBulkEventInvitations);
 router.get('/schedule-event-invitation', emailController.scheduleEventInvitation);
 router.post('/schedule-event-invitation', emailController.scheduleEventInvitation);
+// Email
+router.post('/send-bulk-email', emailController.sendBulkEmails);
+
 
 module.exports = router;
 

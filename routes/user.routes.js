@@ -184,49 +184,6 @@ router.delete('/', userController.deleteAllUsers);
 
 module.exports = router;
 
-// const express = require('express');
-// const router = express.Router();
-// const User = require('../models/user.js');
-// const userController = require('../controllers/user.controller.js');
-
-// // Get user by auth0Id
-// router.get('/:auth0Id', userController.findByAuth0Id);
-
-// // Create new user
-// router.post('/', async (req, res) => {
-//   try {
-//     const { auth0Id, email } = req.body;
-
-//     if (!auth0Id || !email) {
-//       return res.status(400).json({ 
-//         message: "Both auth0Id and email are required",
-//         receivedData: { auth0Id, email }
-//       });
-//     }
-
-//     // Use findOneAndUpdate to either update existing user or create new one
-//     const user = await User.findOneAndUpdate(
-//       { $or: [{ email }, { auth0Id }] },
-//       req.body,
-//       { 
-//         new: true,           // Return the updated document
-//         upsert: true,        // Create document if it doesn't exist
-//         runValidators: true  // Run schema validators on update
-//       }
-//     );
-    
-//     const statusCode = user.createdAt === user.updatedAt ? 201 : 200;
-//     res.status(statusCode).json(user);
-//   } catch (err) {
-//     console.error('Error creating/updating user:', err);
-//     res.status(500).json({ 
-//       message: err.message,
-//       stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-//     });
-//   }
-// });
-
-// module.exports = router;
 
 
 

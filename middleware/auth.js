@@ -44,24 +44,17 @@ const requireAdmin = async (req, res, next) => {
     // Log auth payload for debugging
     console.log('Auth payload:', req.auth?.payload);
 
-    const user = await User.findOne({ auth0Id: req.auth?.payload.sub });
-    
-    if (!user) {
-      console.log('User not found:', req.auth?.payload.sub);
-      return res.status(403).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
+    const roles = req.auth?.payload['https://dev-uizu7j8qzflxzjpy.jr.com/roles'];
 
-    if (user.profile?.role !== 'admin' || user.profile?.role !== 'super-admin') {
-      console.log('Non-admin access attempt:', user.profile?.role);
+    if (!roles || !Array.isArray(roles) || (!roles.includes('admin') && !roles.includes('super-admin'))) {
+      console.log('Forbidden - Admin access required. Roles:', roles);
       return res.status(403).json({
         success: false,
         message: 'Forbidden - Admin access required'
       });
     }
-    
+
+    console.log('Admin access granted. Roles:', roles);
     next();
   } catch (error) {
     console.error('Admin verification error:', error);
