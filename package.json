@@ -1,6 +1,6 @@
 {
   "name": "vite-admin-server1",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB -Auth0 Integration",
   "main": "server.js",
   "scripts": {
