@@ -37,15 +37,26 @@ END:VCALENDAR`;
 }
 
 // Verify transporter configuration
-const verifyTransporter = async () => {
-  try {
-    await transporter.verify();
-    return true;
-  } catch (error) {
-    console.error('Email transporter verification failed:', error);
-    return false;
+const verifyTransporter = nodemailer.createTransport({
+  host: "smtp.example.com",
+  port: 587,
+  secure: false,
+  auth: {
+    type: "LOGIN", // Try using LOGIN instead of PLAIN
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
-};
+});
+
+// const verifyTransporter = async () => {
+//   try {
+//     await transporter.verify();
+//     return true;
+//   } catch (error) {
+//     console.error('Email transporter verification failed:', error);
+//     return false;
+//   }
+// };
 
 // Helper function to send email
 const sendMailAsync = async (mailOptions) => {
@@ -113,28 +124,28 @@ exports.sendEmail = async (req, res) => {
   }
 };
 
-exports.getEmailConfig = async (req, res) => {
-  try {
-    const isTransporterVerified = await verifyTransporter();
+// exports.getEmailConfig = async (req, res) => {
+//   try {
+//     const isTransporterVerified = await verifyTransporter();
 
-    res.json({
-      config: {
-        emailFrom: process.env.EMAIL_FROM,
-        emailFromName: process.env.EMAIL_FROM_NAME,
-        isConfigured: !!process.env.EMAIL_FROM && !!process.env.EMAIL_APP_PASSWORD,
-        isVerified: isTransporterVerified,
-        timestamp: new Date().toISOString()
-      }
-    });
-  } catch (error) {
-    console.error('Error in getEmailConfig controller:', error);
-    res.status(500).json({
-      error: 'Failed to get email configuration',
-      details: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-};
+//     res.json({
+//       config: {
+//         emailFrom: process.env.EMAIL_FROM,
+//         emailFromName: process.env.EMAIL_FROM_NAME,
+//         isConfigured: !!process.env.EMAIL_FROM && !!process.env.EMAIL_APP_PASSWORD,
+//         isVerified: isTransporterVerified,
+//         timestamp: new Date().toISOString()
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Error in getEmailConfig controller:', error);
+//     res.status(500).json({
+//       error: 'Failed to get email configuration',
+//       details: error.message,
+//       timestamp: new Date().toISOString()
+//     });
+//   }
+// };
 
 exports.sendBulkEmails = async (req, res) => {
   try {
@@ -156,7 +167,7 @@ exports.sendBulkEmails = async (req, res) => {
     const emailPromises = emails.map(recipient => {
       const mailOptions = {
         from: {
-          name: process.env.EMAIL_FROM_NAME || 'Your Application Name',
+          name: process.env.EMAIL_FROM_NAME || 'Vite-Admin-Server',
           address: process.env.EMAIL_FROM
         },
         to: recipient,
