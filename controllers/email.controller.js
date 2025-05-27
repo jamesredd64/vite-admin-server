@@ -124,7 +124,7 @@ exports.sendEmail = async (req, res) => {
 
     const mailOptions = {
       from: {
-        name: process.env.EMAIL_FROM_NAME || 'vite-admin-server',
+        name: process.env.EMAIL_FROM_NAME || 'Stagholme Inc',
         address: process.env.EMAIL_FROM
       },
       to: Array.isArray(to) ? to : [to],
@@ -195,7 +195,7 @@ exports.sendBulkEmails = async (req, res) => {
     const emailPromises = emails.map(recipient => {
       const mailOptions = {
         from: {
-          name: process.env.EMAIL_FROM_NAME || 'Vite-Admin-Server',
+          name: process.env.EMAIL_FROM_NAME || 'Stagholme Inc.',
           address: process.env.EMAIL_FROM
         },
         to: recipient,
