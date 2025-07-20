@@ -161,7 +161,7 @@ app.get('/', (req, res) => {
       </head>
       <body>
         <div class="container">
-          <h1>Stagholme API Server</h1>
+          <h1>Showcase API Server</h1>
           
           <div class="info">
             <div class="info-item">
