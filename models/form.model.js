@@ -43,6 +43,14 @@ const formSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  eventName: {
+    type: String,
+    default: "",
+  },
+  eventLocation: {
+    type: String,
+    default: "",
+  },
   submittedAt: {
     type: Date,
     default: Date.now,

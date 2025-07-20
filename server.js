@@ -19,6 +19,7 @@ const VERSION = require('./config/version');
 const { startEventInvitationScheduler } = require('./schedulers/autoEventInvitation');
 const adminSettingsRoutes = require('./routes/admin.settings.routes');
 const formRoutes = require('./routes/form.routes.js') 
+const registerTokenRoute = require('./routes/register-token');
 
 // Helper function to get environment information
 const getEnvironmentInfo = () => {
@@ -233,6 +234,7 @@ app.use('/api/users', userRoutes);
 // Form endpoint
 // app.use('/api/users/forms', formRoutes);
 app.use('/api/forms', formRoutes);
+app.use('/api/forms', registerTokenRoute);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/assets', assetsRoutes);
