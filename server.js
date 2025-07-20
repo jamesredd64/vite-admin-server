@@ -319,7 +319,7 @@ app.use((req, res) => {
 startServer();
 
 // after MongoDB connection is established
-startEventInvitationScheduler();
+// startEventInvitationScheduler();
 
 // Export the app for Vercel
 module.exports = app;
