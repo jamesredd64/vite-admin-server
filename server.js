@@ -189,7 +189,7 @@ app.get('/', (req, res) => {
           </div>
 
           <div class="footer">
-            <p>&copy; ${new Date().getFullYear()} Stagholme Inc. All rights reserved.</p>
+            <p>&copy; ${new Date().getFullYear()} Showcase Inc. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -248,9 +248,6 @@ app.get('/hello', (req, res) => {
   res.status(200).json({ message: 'Hello from the form API!' });
 });
 
-
-
-
 const { body, validationResult } = require('express-validator');
 
 // Error handling middleware
@@ -261,9 +258,6 @@ app.use((err, req, res, next) => {
     message: err.message
   });
 });
-
-
-
 
 const startServer = async () => {
   try {
