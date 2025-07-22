@@ -15,6 +15,7 @@ const config = {
 
 module.exports = config;
 
+
 // const config = {
 //   url: process.env.MONGODB_URI || 'mongodb+srv://jredd2013:X9iwELRRwqCCb7kc@mern-cluster.oistpfp.mongodb.net/?retryWrites=true&w=majority',
 //   database: 'mongo_users-react-dev',
