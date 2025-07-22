@@ -1,3 +1,5 @@
+
+const { formRoutes, registerTokenRoute } = require('./api/forms/server.js');
 const scheduledEventsRoutes = require("./routes/scheduledEventsRoutes");
 const express = require('express');
 const path = require('path');
@@ -18,8 +20,8 @@ const staticMiddleware = require('./middleware/static.middleware');
 const VERSION = require('./config/version');
 const { startEventInvitationScheduler } = require('./schedulers/autoEventInvitation');
 const adminSettingsRoutes = require('./routes/admin.settings.routes');
-const formRoutes = require('./routes/form.routes.js') 
-const registerTokenRoute = require('./routes/register-token');
+// const formRoutes = require('./routes/form.routes.js') 
+// const registerTokenRoute = require('./routes/register-token');
 
 // Helper function to get environment information
 const getEnvironmentInfo = () => {
@@ -233,8 +235,12 @@ app.use((req, res, next) => {
 app.use('/api/users', userRoutes);
 // Form endpoint
 // app.use('/api/users/forms', formRoutes);
+/* Removed forms routes to avoid mixing with forms/server.js
 app.use('/api/forms', formRoutes);
 app.use('/api/forms', registerTokenRoute);
+*/
+app.use('/api/forms/submit-form', formRoutes);
+app.use('/api/forms/register-token', registerTokenRoute);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/assets', assetsRoutes);
