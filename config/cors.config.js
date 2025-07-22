@@ -8,8 +8,8 @@ const allowedOrigins = [
   'http://localhost:5000',
   'capacitor://localhost',
   'ionic://localhost',
-  'https://www.showcase.education',
-  'https://www.showcase.education/events/kilmer-branch-library'
+  'https://www.showcase.education/events/kilmer-branch-library',
+  'https://www.showcase.education'
 ];
 
 const corsOptions = {
