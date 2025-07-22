@@ -7,7 +7,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5000',
   'capacitor://localhost',
-  'ionic://localhost'
+  'ionic://localhost',
+  'https://www.showcase.education'
 ];
 
 const corsOptions = {
