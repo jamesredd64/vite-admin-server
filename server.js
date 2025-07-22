@@ -9,199 +9,49 @@ const corsConfig = require('./config/cors.config.js');
 const userRoutes = require('./routes/user.routes.js');
 const calendarRoutes = require('./routes/calendar.routes');
 const notificationRoutes = require('./routes/notifications');
-const emailRoutes = require('./routes/email.routes'); // Verify this import
-
-const mongoose = require('mongoose');
-const os = require('os');
+const emailRoutes = require('./routes/email.routes');
 const assetsRoutes = require('./routes/assets.routes');
 const staticMiddleware = require('./middleware/static.middleware');
 const VERSION = require('./config/version');
-const { startEventInvitationScheduler } = require('./schedulers/autoEventInvitation');
 const adminSettingsRoutes = require('./routes/admin.settings.routes');
-const formRoutes = require('./routes/form.routes.js') 
+const formRoutes = require('./routes/form.routes.js');
 const registerTokenRoute = require('./routes/register-token');
-
-// Helper function to get environment information
-const getEnvironmentInfo = () => {
-  const isVercel = process.env.VERCEL === '1';
-  const environment = process.env.NODE_ENV || 'development';
-  const region = process.env.VERCEL_REGION || 'N/A'; // Vercel specific region
-  const gitCommitSha = process.env.VERCEL_GIT_COMMIT_SHA || 'N/A'; // Vercel specific git info
-
-  return {
-    environment,
-    platform: isVercel ? 'Vercel' : 'Local Development',
-    region: isVercel ? region : 'N/A', // Only show region if on Vercel
-    git: isVercel ? { commit: gitCommitSha } : { commit: 'N/A' } // Only show git if on Vercel
-  };
-};
-
-
-// Add this to your server startup code, after MongoDB connection is established
-// startEventInvitationScheduler();
+const { startEventInvitationScheduler } = require('./schedulers/autoEventInvitation');
+const { body, validationResult } = require('express-validator');
 
 const app = express();
 
 // Apply CORS configuration BEFORE other middleware
 app.use(corsConfig);
-
-// Handle OPTIONS preflight requests
 app.options('*', corsConfig);
 
 // Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the public directory
+// Static files
 app.use('/images', staticMiddleware);
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Security headers
 app.use((req, res, next) => {
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "font-src 'self' https://fonts.gstatic.com data:; " +
-    "img-src 'self' data: https:; " +
-    "connect-src 'self' https://*;"
-  );
+  res.setHeader('Content-Security-Policy', 
+    "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://*;");
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   next();
 });
 
-// Add this route before your other routes
+// Root endpoint (just for status display)
 app.get('/', (req, res) => {
   const buildDate = new Date(VERSION.buildDate).toLocaleDateString();
-  
-  const html = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Stagholme API Server</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" type="image/png" href="/favicon.png">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-            line-height: 1.5;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-          }
-          .container {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-          }
-          h1 {
-            margin: 0 0 1rem 0;
-            color: #1a1a1a;
-          }
-          .info {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            text-align: left;
-          }
-          .info-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 0.5rem 0;
-          }
-          .label {
-            color: #666;
-          }
-          .value {
-            color: #1a1a1a;
-            font-weight: 500;
-          }
-          .footer {
-            margin-top: 2rem;
-            font-size: 0.875rem;
-            color: #666;
-          }
-          @media (prefers-color-scheme: dark) {
-            body {
-              background: #1a1a1a;
-              color: #e5e5e5;
-            }
-            .container {
-              background: #2d2d2d;
-            }
-            h1 {
-              color: #ffffff;
-            }
-            .info {
-              background: #333333;
-            }
-            .label {
-              color: #999;
-            }
-            .value {
-              color: #ffffff;
-            }
-            .footer {
-              color: #999;
-            }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>Showcase API Server</h1>
-          
-          <div class="info">
-            <div class="info-item">
-              <span class="label">Version</span>
-              <span class="value">${VERSION.number}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Environment</span>
-              <span class="value">${VERSION.environment}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Build Date</span>
-              <span class="value">${buildDate}</span>
-            </div>
-            ${VERSION.isVercel ? `
-            <div class="info-item">
-              <span class="label">Platform</span>
-              <span class="value">Vercel</span>
-            </div>
-            ` : ''}
-            <div class="info-item">
-              <span class="label">Status</span>
-              <span class="value">Operational</span>
-            </div>
-          </div>
-
-          <div class="footer">
-            <p>&copy; ${new Date().getFullYear()} Showcase Inc. All rights reserved.</p>
-          </div>
-        </div>
-      </body>
-    </html>
-  `;
-  
-  res.send(html);
+  res.send(`API Server is running. Version: ${VERSION.number}. Build Date: ${buildDate}`);
 });
 
-// Add logging middleware for debugging
+// Debug logger
 app.use((req, res, next) => {
-  const timestamp = new Date().toLocaleString(); // Use local time instead of ISO
+  const timestamp = new Date().toLocaleString();
   console.log(`🔍 [${timestamp}] Incoming Request:`, {
     method: req.method,
     url: req.url,
@@ -215,8 +65,7 @@ app.use((req, res, next) => {
       'authorization': req.headers['authorization'] ? '**Present**' : '**Not Present**'
     }
   });
-  
-  // Log the response
+
   const originalSend = res.send;
   res.send = function (data) {
     console.log(`📤 [${timestamp}] Response:`, {
@@ -229,91 +78,66 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+// API Routes
 app.use('/api/users', userRoutes);
-// Form endpoint
-// app.use('/api/users/forms', formRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/forms', registerTokenRoute);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/assets', assetsRoutes);
-app.use('/api/email', emailRoutes); // This is correct
+app.use('/api/email', emailRoutes);
 app.use('/api/admin', adminSettingsRoutes);
-// app.use("/api/event-invitation", emailRoutes);
-app.use('/api/email/event-invitation', emailRoutes); // This is correct
-app.use("/api", scheduledEventsRoutes);
-// app.use("/api/events", scheduledEventsRoutes);
+app.use('/api', scheduledEventsRoutes);
+
+// Hello test route
 app.get('/hello', (req, res) => {
   res.status(200).json({ message: 'Hello from the form API!' });
 });
 
-const { body, validationResult } = require('express-validator');
-
-// Error handling middleware
+// Error handling
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res.status(500).json({
-    error: 'Something broke!',
-    message: err.message
-  });
+  res.status(500).json({ error: 'Something broke!', message: err.message });
 });
 
-const startServer = async () => {
-  try {
-    // Initialize static directories
-    const publicDir = path.join(__dirname, 'public');
-    const imagesDir = path.join(publicDir, 'images');
-    
-    // Ensure directories exist
-    [publicDir, imagesDir].forEach(dir => {
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-    });
-
-    // Connect to database
-    await connectDB();
-    console.log('Database connection established');
-
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-      console.log(`Environment: ${process.env.NODE_ENV}`);
-      console.log(`Static files served from: ${path.join(__dirname, 'public')}`);
-      console.log(`Email service: ${process.env.EMAIL_FROM || 'Not configured'}`);
-    });
-  } catch (err) {
-    console.error('Failed to start server:', err);
-    process.exit(1);
-  }
-};
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-  process.exit(1);
-});
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Rejection:', err);
-  process.exit(1);
-});
-
-// Handle 404s
+// 404 fallback
 app.use((req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: 'The requested resource was not found'
-  });
+  res.status(404).json({ error: 'Not Found', message: 'The requested resource was not found' });
 });
 
-// Start server
-startServer();
+// 🔁 Start the server only in local development
+if (process.env.VERCEL !== '1') {
+  const startServer = async () => {
+    try {
+      const publicDir = path.join(__dirname, 'public');
+      const imagesDir = path.join(publicDir, 'images');
 
-// after MongoDB connection is established
-// startEventInvitationScheduler();
+      [publicDir, imagesDir].forEach(dir => {
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+      });
 
-// Export the app for Vercel
+      await connectDB();
+      console.log('Database connection established');
+
+      const PORT = process.env.PORT || 5000;
+      app.listen(PORT, () => {
+        console.log(`🚀 Local server running on port ${PORT}`);
+        console.log(`Static files served from: ${publicDir}`);
+        console.log(`Email service: ${process.env.EMAIL_FROM || 'Not configured'}`);
+      });
+    } catch (err) {
+      console.error('Failed to start server:', err);
+      process.exit(1);
+    }
+  };
+
+  startServer();
+}
+
+// ✅ Export app for Vercel
 module.exports = app;
+
+
+

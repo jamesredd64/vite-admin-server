@@ -30,7 +30,16 @@
     {
       "source": "/api/:path*",
       "destination": "server.js"
+    },      
+    { 
+      "source": "/api/forms/submit-form", "destination": "/api/server.js" 
+    },
+    { 
+      "source": "/api/forms/register-token", "destination": "/api/server.js" 
     }
+      
+    
+    
   ],
   "headers": [
     {

@@ -1,6 +1,7 @@
 const { body, validationResult } = require("express-validator");
 const FormSubmission = require("../models/form.model.js");
 const sanitizeHtml = require("sanitize-html");
+const ScheduledEventService = require('../services/scheduledEvents.service');
 const tokenStore = require("../utils/tokenStore");
 
 const validateFormSubmission = [
@@ -22,7 +23,8 @@ const submitForm = async (req, res) => {
 
   // Validate token from request body
   const { token } = req.body;
-  if (!tokenStore.isValid(token)) {
+  const isLocal = process.env.RUN_MODE === 'd';
+  if (!isLocal && !tokenStore.isValid(token)) {
     return res.status(403).json({ success: false, error: "Invalid or expired token" });
   }
 
@@ -48,7 +50,39 @@ const submitForm = async (req, res) => {
 
     await newFormSubmission.save();
 
-    return res.status(200).json({ success: true, message: "Form submission created successfully", data: newFormSubmission });
+    // Prepare event data for scheduling/upserting
+    const eventDetails = {
+      startTime: new Date(eventDate),
+      endTime: new Date(new Date(eventDate).getTime() + 2 * 60 * 60 * 1000), // default 2 hours duration
+      summary: eventName,
+      description: `Event at ${eventLocation}`,
+      location: eventLocation,
+      organizer: {
+        name: `${firstName} ${lastName}`,
+        email: email
+      }
+    };
+
+    // Include the submitting user in selectedUsers
+    const selectedUsers = [{
+      email: email,
+      name: `${firstName} ${lastName}`
+    }];
+
+    // Call scheduleEvent to upsert the event
+    await ScheduledEventService.scheduleEvent({
+      eventDetails,
+      scheduledTime: new Date(), // immediate scheduling
+      selectedUsers
+    });
+
+    // Send confirmation email with ical event to the submitting user
+    await ScheduledEventService.sendImmediateInvitations({
+      ...eventDetails,
+      selectedUsers
+    });
+
+    return res.status(200).json({ success: true, message: "Form submission created, event scheduled, and confirmation email sent successfully", data: newFormSubmission });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

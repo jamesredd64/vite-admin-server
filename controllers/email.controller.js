@@ -36,31 +36,6 @@ END:VEVENT
 END:VCALENDAR`;
 }
 
-// Verify transporter configuration
-// const verifyTransporter = async () => {
-//   try {
-//     await transporter.verify();
-//     console.log('Transporter is ready to send emails!');
-//     return true;
-//   } catch (error) {
-//     console.error('Email transporter verification failed:', error);
-//     return false;
-//   }
-// };
-
-// // Example usage:
-// verifyTransporter();
-// const verifyTransporter = nodemailer.createTransport({
-//   host: "smtp.example.com",
-//   port: 587,
-//   secure: false,
-//   auth: {
-//     type: "LOGIN", // Try using LOGIN instead of PLAIN
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS
-//   }
-// });
-
 const verifyTransporter = async () => {
   try {
     await transporter.verify();
@@ -70,21 +45,6 @@ const verifyTransporter = async () => {
     return false;
   }
 };
-
-// const nodemailer = require('nodemailer');
-
-// const transporter = nodemailer.createTransport({
-//   host: 'smtp.example.com', // Replace with your SMTP host
-//   port: 587, // Use 465 for SSL, or 587 for TLS
-//   secure: false, // Set to 'true' if using port 465
-//   auth: {
-//     user: process.env.SMTP_USER, // Your email address
-//     pass: process.env.SMTP_PASS  // Your app password
-//   }
-// });
-
-
-
 
 // Helper function to send email
 const sendMailAsync = async (mailOptions) => {
@@ -431,6 +391,7 @@ exports.scheduleEventInvitation = async (req, res) => {
             selectedUsers
         });
 
+        // Use the updated scheduleEvent method that performs upsert
         const scheduledEvent = await ScheduledEventService.scheduleEvent({
             eventDetails,
             scheduledTime: new Date(scheduledTime),
@@ -459,38 +420,6 @@ exports.scheduleEventInvitation = async (req, res) => {
         });
     }
 };
-// exports.scheduleEventInvitation = async (req, res) => {
-//     try {
-//         const { eventDetails, scheduledTime, selectedUsers } = req.body;
-
-//         if (!eventDetails || !scheduledTime) {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: 'Event details and scheduled time are required'
-//             });
-//         }
-
-//         const scheduledEvent = await ScheduledEventService.scheduleEvent({
-//             eventDetails,
-//             scheduledTime: new Date(scheduledTime),
-//             selectedUsers
-//         });
-
-//         res.json({
-//             success: true,
-//             message: 'Event scheduled successfully',
-//             scheduledEvent
-//         });
-
-//     } catch (error) {
-//         console.error('Error in scheduleEventInvitation:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'Failed to schedule invitation',
-//             error: error.message
-//         });
-//     }
-// };
 
 
 
