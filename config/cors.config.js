@@ -12,6 +12,8 @@ const allowedOrigins = [
   'https://www.showcase.education'
 ];
 
+console.log('📬 Received form submission');
+
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps)

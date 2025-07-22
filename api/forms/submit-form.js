@@ -6,6 +6,8 @@ const formController = require('../../controllers/formController.js');
 router.post('/', async (req, res) => {
   try {
     const formData = req.body;
+    
+    console.log('📬 Received form submission');
 
     // Call scheduleEvent to upsert event
     const scheduledEvent = await ScheduledEventService.scheduleEvent(formData.eventData);

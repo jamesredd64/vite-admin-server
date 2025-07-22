@@ -30,6 +30,7 @@ const connectDB = async () => {
       w: "majority"
     });
     
+    // console.log('📬 Received form submission');
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     console.log(`Using database: ${conn.connection.name}`);
     console.log(`Current database settings:`, {
