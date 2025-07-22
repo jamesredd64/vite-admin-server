@@ -47,8 +47,17 @@ const app = express();
 // Apply CORS configuration BEFORE other middleware
 app.use(corsConfig);
 
+app.use(cors(corsOptions)); // This must be FIRST
+
 // Handle OPTIONS preflight requests
 app.options('*', corsConfig);
+
+// Newly added middleware for logging the request origin
+app.use((req, res, next) => {
+  console.log('🌐 Request Origin:', req.headers.origin);
+  next();
+});
+
 
 // Basic middleware
 app.use(express.json());
