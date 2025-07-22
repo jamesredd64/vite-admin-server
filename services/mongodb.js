@@ -16,6 +16,8 @@ const connectDB = async () => {
       isDevMode: dbConfig.options.dbName.includes('-dev')
     });
     
+    // 🧠 Disable autoIndex in production to prevent timeout on serverless platforms
+    mongoose.set('autoIndex', process.env.NODE_ENV !== 'production');
     const conn = await mongoose.connect(dbConfig.url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
