@@ -18,6 +18,7 @@ const connectDB = async () => {
     
     // 🧠 Disable autoIndex in production to prevent timeout on serverless platforms
     mongoose.set('autoIndex', process.env.NODE_ENV !== 'production');
+    console.log(`MongoDB autoIndex was set: `);
     const conn = await mongoose.connect(dbConfig.url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
