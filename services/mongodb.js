@@ -45,10 +45,6 @@ const connectDB = async () => {
 
 module.exports = connectDB;
 
-
-
-
-
 // const mongoose = require("mongoose");
 // const dbConfig = require("../config/db.config.js");
 
