@@ -2,7 +2,7 @@ const cors = require('cors');
 
 const allowedOrigins = [
   'https://vite-front-end.vercel.app',
-  'https://admin-backend-eta.vercel.app'.at.. working on
+  'https://admin-backend-eta.vercel.app',
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:5000',
