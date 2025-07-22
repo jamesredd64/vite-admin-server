@@ -243,11 +243,8 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/users', userRoutes);
 // Form endpoint
-// app.use('/api/users/forms', formRoutes);
-/* Removed forms routes to avoid mixing with forms/server.js
-app.use('/api/forms', formRoutes);
-app.use('/api/forms', registerTokenRoute);
-*/
+
+
 app.use('/api/forms/submit-form', formRoutes);
 app.use('/api/forms/register-token', registerTokenRoute);
 app.use('/api/calendar', calendarRoutes);
