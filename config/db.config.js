@@ -9,7 +9,8 @@ const config = {
     connectTimeoutMS: 30000,
     socketTimeoutMS: 45000,
     retryWrites: true,
-    w: 'majority'
+    w: 'majority',
+    autoIndex: false // Disable auto-indexing
   }
 };
 
