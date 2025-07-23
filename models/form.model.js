@@ -83,6 +83,6 @@ const formSchema = new mongoose.Schema({
   });
 
 // Add index for faster queries based on email
-formSchema.index({ email: 1 });
+// formSchema.index({ email: 1 });
 
 module.exports = mongoose.model('FormSubmission', formSchema);
