@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const ScheduledEventService = require('../../services/scheduledEvents.service.js');
+// const ScheduledEventService = require('../../services/scheduledEvents.service.js');
+const SingleUserEventService = require('../../services/singleUserEvent.service.js');
 const formController = require('../../controllers/formController.js');
 
 router.post('/', async (req, res) => {
@@ -11,7 +12,7 @@ router.post('/', async (req, res) => {
     console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
 
     // Call scheduleEvent to upsert event
-    const scheduledEvent = await ScheduledEventService.scheduleEvent(formData.eventData);
+    const scheduledEvent = await SingleUserEventService.scheduleAndNotify(formData.eventData);
 
     // Send confirmation email
     await formController.sendConfirmationEmail(formData);
