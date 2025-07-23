@@ -23,6 +23,7 @@ const adminSettingsRoutes = require('./routes/admin.settings.routes');
 // const formRoutes = require('./routes/form.routes.js') 
 // const registerTokenRoute = require('./routes/register-token');
 
+
 // Helper function to get environment information
 const getEnvironmentInfo = () => {
   const isVercel = process.env.VERCEL === '1';
