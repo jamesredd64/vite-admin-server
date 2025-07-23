@@ -2,14 +2,7 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
-  "functions": {
-    "api/index.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "routes": [
-    { "src": "/(.*)", "dest": "/api/index.js" }
-  ],
+  
   "builds": [
     {
       "src": "server.js",
