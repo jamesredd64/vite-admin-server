@@ -7,7 +7,7 @@ router.post('/', async (req, res) => {
   try {
     const formData = req.body;
     
-    console.log('📬 Received form submission');
+    console.log('📬 Received form submission from forms/server.js');
 
     // Call scheduleEvent to upsert event
     const scheduledEvent = await ScheduledEventService.scheduleEvent(formData.eventData);

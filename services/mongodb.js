@@ -31,6 +31,7 @@ const connectDB = async () => {
       w: "majority"
     });
     
+    console.log(`process.env.NODE_ENV : ${process.env.NODE_ENV}`);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     console.log(`Using database: ${conn.connection.name}`);
     console.log(`Current database settings:`, {
