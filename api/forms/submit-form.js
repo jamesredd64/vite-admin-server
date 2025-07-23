@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 // const ScheduledEventService = require('../../services/scheduledEvents.service.js');
-const SingleUserEventService = require('../../services/singleUserEvent.service.js');
+const SingleUserEventService = require('../../services/singleUserEventService.js');
 const formController = require('../../controllers/formController.js');
 
 router.post('/', async (req, res) => {

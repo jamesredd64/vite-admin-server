@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const FormSubmission = require("../models/form.model");
 const tokenStore = require("../utils/tokenStore");
-const SingleUserEventService = require("../services/singleUserEvent.service"); // 🔁 New import
+const SingleUserEventService = require("../services/singleUserEventService"); // 🔁 New import
 
 const submitForm = async (req, res) => {
   const errors = validationResult(req);
