@@ -22,57 +22,77 @@ class ScheduledEventService {
 
   static async scheduleEvent(eventData) {
     try {
-      console.log('Upserting scheduled event with data:', eventData);
-
-      // Query candidate events by summary, location, and organizer email
-      const candidates = await ScheduledEvent.find({
-        'eventDetails.summary': eventData.eventDetails.summary,
-        'eventDetails.location': eventData.eventDetails.location,
-        'eventDetails.organizer.email': eventData.eventDetails.organizer.email
+      if (!eventData || typeof eventData !== 'object') {
+        throw new Error('scheduleEvent: eventData is missing or invalid');
+      }
+  
+      const { eventDetails, scheduledTime, selectedUsers } = eventData;
+  
+      // Guard required fields
+      if (!eventDetails || typeof eventDetails !== 'object') {
+        throw new Error('scheduleEvent: eventDetails is missing or invalid');
+      }
+  
+      if (!eventDetails.startTime || !eventDetails.summary || !eventDetails.organizer?.email) {
+        throw new Error('scheduleEvent: eventDetails missing required keys');
+      }
+  
+      if (!Array.isArray(selectedUsers)) {
+        throw new Error('scheduleEvent: selectedUsers must be an array');
+      }
+  
+      console.log('✅ Validated eventData:', {
+        summary: eventDetails.summary,
+        startTime: eventDetails.startTime,
+        organizerEmail: eventDetails.organizer.email,
+        scheduledTime,
+        selectedUserCount: selectedUsers.length
       });
-
-      // Find existing event by comparing dates using compareDates
+  
+      const candidates = await ScheduledEvent.find({
+        'eventDetails.summary': eventDetails.summary,
+        'eventDetails.location': eventDetails.location,
+        'eventDetails.organizer.email': eventDetails.organizer.email
+      });
+  
       const existingEvent = candidates.find(event =>
-        compareDates(event.eventDetails.startTime.toISOString(), eventData.eventDetails.startTime.toISOString().split('T')[0])
+        compareDates(event.eventDetails.startTime.toISOString(), eventDetails.startTime.toISOString().split('T')[0])
       );
-
+  
       console.log('Existing event found by compareDates:', existingEvent);
-
+  
       if (existingEvent) {
-        // Update existing event
         const update = {
           $set: {
-            'eventDetails.endTime': new Date(eventData.eventDetails.endTime),
-            'eventDetails.description': eventData.eventDetails.description,
-            'eventDetails.location': eventData.eventDetails.location,
-            'eventDetails.organizer': eventData.eventDetails.organizer,
-            scheduledTime: new Date(eventData.scheduledTime),
+            'eventDetails.endTime': new Date(eventDetails.endTime),
+            'eventDetails.description': eventDetails.description,
+            'eventDetails.location': eventDetails.location,
+            'eventDetails.organizer': eventDetails.organizer,
+            scheduledTime: new Date(scheduledTime),
             status: 'pending'
           },
           $addToSet: {
-            selectedUsers: { $each: eventData.selectedUsers }
+            selectedUsers: { $each: selectedUsers }
           }
         };
-
+  
         const updatedEvent = await ScheduledEvent.findByIdAndUpdate(existingEvent._id, update, { new: true });
         console.log('Updated existing scheduled event:', updatedEvent);
         return updatedEvent;
       } else {
-        // Normalize eventData.eventDetails.startTime and endTime to midnight UTC for storage
-        const startDate = new Date(eventData.eventDetails.startTime);
+        const startDate = new Date(eventDetails.startTime);
         startDate.setUTCHours(0, 0, 0, 0);
-        eventData.eventDetails.startTime = new Date(startDate);
-        eventData.eventDetails.endTime = new Date(startDate);
-        eventData.eventDetails.endTime.setUTCHours(23, 59, 59, 999);
-
-        // Create new event
+        eventDetails.startTime = new Date(startDate);
+        eventDetails.endTime = new Date(startDate);
+        eventDetails.endTime.setUTCHours(23, 59, 59, 999);
+  
         const newEvent = new ScheduledEvent({
-          eventDetails: eventData.eventDetails,
-          scheduledTime: new Date(eventData.scheduledTime),
-          selectedUsers: eventData.selectedUsers,
+          eventDetails,
+          scheduledTime: new Date(scheduledTime),
+          selectedUsers,
           status: 'pending'
         });
-
+  
         const savedEvent = await newEvent.save();
         console.log('Created new scheduled event:', savedEvent);
         return savedEvent;
@@ -86,6 +106,74 @@ class ScheduledEventService {
       throw error;
     }
   }
+  
+
+  // static async scheduleEvent(eventData) {
+  //   try {
+  //     console.log('Upserting scheduled event with data:', eventData);
+
+  //     // Query candidate events by summary, location, and organizer email
+  //     const candidates = await ScheduledEvent.find({
+  //       'eventDetails.summary': eventData.eventDetails.summary,
+  //       'eventDetails.location': eventData.eventDetails.location,
+  //       'eventDetails.organizer.email': eventData.eventDetails.organizer.email
+  //     });
+
+  //     // Find existing event by comparing dates using compareDates
+  //     const existingEvent = candidates.find(event =>
+  //       compareDates(event.eventDetails.startTime.toISOString(), eventData.eventDetails.startTime.toISOString().split('T')[0])
+  //     );
+
+  //     console.log('Existing event found by compareDates:', existingEvent);
+
+  //     if (existingEvent) {
+  //       // Update existing event
+  //       const update = {
+  //         $set: {
+  //           'eventDetails.endTime': new Date(eventData.eventDetails.endTime),
+  //           'eventDetails.description': eventData.eventDetails.description,
+  //           'eventDetails.location': eventData.eventDetails.location,
+  //           'eventDetails.organizer': eventData.eventDetails.organizer,
+  //           scheduledTime: new Date(eventData.scheduledTime),
+  //           status: 'pending'
+  //         },
+  //         $addToSet: {
+  //           selectedUsers: { $each: eventData.selectedUsers }
+  //         }
+  //       };
+
+  //       const updatedEvent = await ScheduledEvent.findByIdAndUpdate(existingEvent._id, update, { new: true });
+  //       console.log('Updated existing scheduled event:', updatedEvent);
+  //       return updatedEvent;
+  //     } else {
+  //       // Normalize eventData.eventDetails.startTime and endTime to midnight UTC for storage
+  //       const startDate = new Date(eventData.eventDetails.startTime);
+  //       startDate.setUTCHours(0, 0, 0, 0);
+  //       eventData.eventDetails.startTime = new Date(startDate);
+  //       eventData.eventDetails.endTime = new Date(startDate);
+  //       eventData.eventDetails.endTime.setUTCHours(23, 59, 59, 999);
+
+  //       // Create new event
+  //       const newEvent = new ScheduledEvent({
+  //         eventDetails: eventData.eventDetails,
+  //         scheduledTime: new Date(eventData.scheduledTime),
+  //         selectedUsers: eventData.selectedUsers,
+  //         status: 'pending'
+  //       });
+
+  //       const savedEvent = await newEvent.save();
+  //       console.log('Created new scheduled event:', savedEvent);
+  //       return savedEvent;
+  //     }
+  //   } catch (error) {
+  //     console.error('Error in ScheduledEventService.scheduleEvent:', {
+  //       error: error.message,
+  //       stack: error.stack,
+  //       eventData
+  //     });
+  //     throw error;
+  //   }
+  // }
 
   static async processScheduledEvents() {
     const now = new Date();
