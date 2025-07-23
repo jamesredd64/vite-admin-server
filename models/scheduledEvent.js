@@ -30,7 +30,9 @@ if (mongoose.models.ScheduledEvent) {
     createdAt: {
       type: Date,
       default: Date.now
-    }
+    },
+    autoIndex: false, // ✅ disables index creation
+    timestamps: true
   });
 
   // Add indexes for better query performance

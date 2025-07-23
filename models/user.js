@@ -126,9 +126,11 @@ const userSchema = new mongoose.Schema({
       submittedAt: { type: Date, default: Date.now },
     }
   ]
-}, {
-  timestamps: true,
-  collection: "users",
+},
+  {
+    autoIndex: false, // ✅ disables index creation
+    timestamps: true,
+    collection: "users",
 });
 
 // Add any pre/post hooks if needed

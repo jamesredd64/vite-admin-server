@@ -75,7 +75,8 @@ const calendarEventSchema = new mongoose.Schema({
     }
   }
 }, {
-  timestamps: true,
+  autoIndex: false, // ✅ disables index creation
+    timestamps: true,
   toJSON: { 
     virtuals: true,
     transform: function(doc, ret) {

@@ -96,6 +96,7 @@ const adminSettingsSchema = new mongoose.Schema({
     }
   }
 }, {
+  autoIndex: false, // ✅ disables index creation
   timestamps: true,
   collection: 'adminsettings'
 });

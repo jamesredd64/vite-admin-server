@@ -3,9 +3,12 @@ module.exports = mongoose => {
     {
       title: String,
       description: String,
-      published: Boolean
+      published: Boolean,
     },
-    { timestamps: true }
+    { autoIndex: false, // ✅ disables index creation
+      timestamps: true
+            
+    }
   );
 
   schema.method("toJSON", function() {
