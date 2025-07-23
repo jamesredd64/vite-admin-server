@@ -10,7 +10,8 @@ const config = {
     socketTimeoutMS: 45000,
     retryWrites: true,
     w: 'majority',
-    autoIndex: process.env.NODE_ENV !== 'production' // Disable auto-indexing
+    autoIndex: false
+      // process.env.NODE_ENV !== 'production' // Disable auto-indexing
   }
 };
 

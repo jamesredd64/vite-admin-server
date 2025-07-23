@@ -5,7 +5,8 @@ const dbConfig = require("../config/db.config.js");
 mongoose.set('strictQuery', true);
 
 // 🧠 Disable autoIndex in production to prevent timeout on serverless platforms
-// mongoose.set('autoIndex', process.env.NODE_ENV !== 'production');
+//  mongoose.set('autoIndex', process.env.NODE_ENV !== 'production');
+mongoose.set('autoIndex', false);
 const connectDB = async () => {
   try {
     if (!dbConfig.url) {
