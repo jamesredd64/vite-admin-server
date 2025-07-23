@@ -174,7 +174,6 @@ class ScheduledEventService {
   //     throw error;
   //   }
   // }
-
   static async processScheduledEvents() {
     const now = new Date();
     const pendingEvents = await ScheduledEvent.find({
