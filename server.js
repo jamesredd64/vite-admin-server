@@ -1,4 +1,6 @@
 
+const cors = require('cors');  // Add this import
+
 // testing
 
 const { formRoutes, registerTokenRoute } = require('./api/forms/server.js');
@@ -47,10 +49,12 @@ const getEnvironmentInfo = () => {
 
 const app = express();
 
+/* Removed the following line because corsOptions is not defined here and corsConfig already applies CORS middleware */
+// app.use(cors(corsOptions)); // This must be FIRST
 // Apply CORS configuration BEFORE other middleware
 app.use(corsConfig);
 
-app.use(cors(corsOptions)); // This must be FIRST
+
 
 // Handle OPTIONS preflight requests
 app.options('*', corsConfig);
