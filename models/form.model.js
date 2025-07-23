@@ -77,8 +77,20 @@ const formSchema = new mongoose.Schema({
       delete ret.__v;
       return ret;
     }
-  }
-});
+  },
+  {
+    timestamps: true,
+    autoIndex: false, // 🧠 prevent index creation in production
+    toJSON: { 
+      virtuals: true,
+      transform: function(doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      }
+    }
+  });
 
 // Add index for faster queries based on email
 formSchema.index({ email: 1 });
