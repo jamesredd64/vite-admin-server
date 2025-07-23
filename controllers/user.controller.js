@@ -34,8 +34,19 @@ const initializeUserModel = () => {
   });
 };
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 // Initialize model and indexes before exposing controller methods
-initializeUserModel()
+const initializeUserModelSafe = () => {
+  if (isProduction) {
+    console.log("Production environment detected - skipping manual index creation.");
+    return Promise.resolve();
+  } else {
+    return initializeUserModel();
+  }
+};
+
+initializeUserModelSafe()
   .then(() => {
     console.log("User model initialized successfully");
   })
