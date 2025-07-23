@@ -15,7 +15,8 @@ const connectDB = async () => {
     console.log('Attempting to connect to MongoDB with config:', {
       database: dbConfig.database,
       dbName: dbConfig.options.dbName,
-      isDevMode: dbConfig.options.dbName.includes('-dev')
+      isDevMode: false
+      // isDevMode: dbConfig.options.dbName.includes('-dev')
     });
     
     const conn = await mongoose.connect(dbConfig.url, {
