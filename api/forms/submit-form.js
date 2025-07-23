@@ -8,6 +8,7 @@ router.post('/', async (req, res) => {
     const formData = req.body;
     
     console.log('📬 Received form submission from forms/server.js');
+    console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
 
     // Call scheduleEvent to upsert event
     const scheduledEvent = await ScheduledEventService.scheduleEvent(formData.eventData);
