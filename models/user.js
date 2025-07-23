@@ -140,6 +140,8 @@ userSchema.pre("save", function (next) {
 });
 
 // Create and export the model
+mongoose.set('autoIndex', process.env.NODE_ENV !== 'production');
+
 const User = mongoose.model("User", userSchema);
 console.log("User model compiled successfully");
 

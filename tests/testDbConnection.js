@@ -6,6 +6,7 @@ async function testDbConnection() {
     console.log('Testing database connection...');
     console.log('Database URL:', dbConfig.url);
     console.log('Database Name:', dbConfig.database);
+    mongoose.set('autoIndex', process.env.NODE_ENV !== 'production');
 
     await mongoose.connect(dbConfig.url, {
       dbName: dbConfig.database

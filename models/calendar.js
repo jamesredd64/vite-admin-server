@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 router.get('/debug/connection', async (req, res) => {
   try {
     // Get the MongoDB connection
+    mongoose.set('autoIndex', process.env.NODE_ENV !== 'production');
     const db = mongoose.connection.db;
     
     // List all collections
