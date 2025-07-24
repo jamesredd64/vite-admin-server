@@ -20,6 +20,9 @@ static async scheduleAndNotify(input) {
       console.error('❌ No input provided to scheduleAndNotify');
       throw new Error('No data passed to scheduler');
     }
+    else {
+        console.log('📨 Received input:', input); // ← Check this
+    }
   
     const { eventDetails, selectedUser } = input;
   
