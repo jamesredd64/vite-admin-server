@@ -10,7 +10,7 @@ const submitForm = async (req, res) => {
   }
 
   console.log('📦 Incoming event data:', req.body);
-  
+
   // const { token } = req.body;
   // const isLocal = process.env.RUN_MODE === 'd';
   // if (!isLocal && !tokenStore.isValid(token)) {
@@ -18,9 +18,7 @@ const submitForm = async (req, res) => {
   // }
 
 
-  try {
-
-    
+  try {   
 
     const {
       firstName,
@@ -34,22 +32,24 @@ const submitForm = async (req, res) => {
       extendedProps
     } = req.body;
 
+    console.log("📦 req.body Fields...", req.body);
+
     const sanitizedExtendedProps = extendedProps || { source: "other" };
 
-    const newFormSubmission = new FormSubmission({
-      firstName,
-      lastName,
-      email,
-      phoneNumber: phoneNumber || "",
-      eventName: eventName || "",
-      eventLocation: eventLocation || "",
-      zipCode: zipCode || "",
-      eventDate,
-      submittedAt: new Date(),
-      extendedProps: sanitizedExtendedProps
-    });
+    // const newFormSubmission = new FormSubmission({
+    //   firstName,
+    //   lastName,
+    //   email,
+    //   phoneNumber: phoneNumber || "",
+    //   eventName: eventName || "",
+    //   eventLocation: eventLocation || "",
+    //   zipCode: zipCode || "",
+    //   eventDate,
+    //   submittedAt: new Date(),
+    //   extendedProps: sanitizedExtendedProps
+    // });
 
-    await newFormSubmission.save();
+    // await newFormSubmission.save();
 
     const eventDetails = {
       startTime: new Date(eventDate),
@@ -64,6 +64,8 @@ const submitForm = async (req, res) => {
     };
 
     console.log("📦 Scheduling single-user event and sending invitation...");
+    console.log("📦 description...", description);
+    console.log("📦 location...", location);
 
     await SingleUserEventService.scheduleAndNotify({
       eventDetails,
