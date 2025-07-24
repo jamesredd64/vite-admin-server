@@ -4,8 +4,10 @@ const tokenStore = require("../utils/tokenStore");
 const SingleUserEventService = require("../services/singleUserEventService"); // 🔁 New import
 
 const submitForm = async (req, res) => {
+  console.log('📦 Received Form Data :');
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('📦 Error :', errors);
     return res.status(400).json({ success: false, errors: errors.array() });
   }
 
