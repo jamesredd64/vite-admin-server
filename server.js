@@ -3,7 +3,7 @@ const cors = require('cors');  // Add this import
 
 // testing
 
-const { formRoutes, registerTokenRoute } = require('./api/forms/server.js');
+const { formRoutes } = require('./api/forms/server.js');
 const scheduledEventsRoutes = require("./routes/scheduledEventsRoutes");
 const express = require('express');
 const path = require('path');
@@ -251,7 +251,7 @@ app.use((req, res, next) => {
 app.use('/api/users', userRoutes);
 // Form endpoint
 app.use('/api/forms/submit-form', formRoutes);
-app.use('/api/forms/register-token', registerTokenRoute);
+// app.use('/api/forms/register-token', registerTokenRoute);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/assets', assetsRoutes);
