@@ -14,9 +14,10 @@ const submitForm = async (req, res) => {
   // if (!isLocal && !tokenStore.isValid(token)) {
   //   return res.status(403).json({ success: false, error: "Invalid or expired token" });
   // }
+  
 
   try {
-    
+
     console.log('📦 Incoming event data:', req.body);
 
     const {
