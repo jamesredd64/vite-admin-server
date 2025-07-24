@@ -10,16 +10,28 @@ function compareDates(isoString, dateString) {
 
 class SingleUserEventService {
     
-    static async scheduleAndNotify({ eventDetails, selectedUser }) {
-        // console.log('📨 Received input:', input); // ← Check this
-        console.log('📨 scheduleAndNotify received:', { eventDetails, selectedUser });
+    // static async scheduleAndNotify({ eventDetails, selectedUser }) {
+    //     // console.log('📨 Received input:', input); // ← Check this
+    //     console.log('📨 scheduleAndNotify received:', { eventDetails, selectedUser });
 
-        // const { eventDetails, selectedUser } = input;
+//     // const { eventDetails, selectedUser } = input;
+static async scheduleAndNotify(input) {
+    if (!input) {
+      console.error('❌ No input provided to scheduleAndNotify');
+      throw new Error('No data passed to scheduler');
+    }
+  
+    const { eventDetails, selectedUser } = input;
+  
+    // if (!eventDetails || !selectedUser) {
+    //   console.error('❌ Missing eventDetails or selectedUser in scheduleAndNotify');
+    //   throw new Error('Malformed scheduler payload');
+    // }
 
     try {
-      if (!eventDetails || !selectedUser || !selectedUser.email) {
-        throw new Error('Missing required eventDetails or selectedUser');
-      }
+    //   if (!eventDetails || !selectedUser || !selectedUser.email) {
+    //     throw new Error('Missing required eventDetails or selectedUser');
+    //   }
 
       // 🔎 Check for existing event
       const candidates = await ScheduledEvent.find({
