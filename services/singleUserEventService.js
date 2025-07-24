@@ -11,9 +11,11 @@ function compareDates(isoString, dateString) {
 class SingleUserEventService {
     
     static async scheduleAndNotify({ eventDetails, selectedUser }) {
-        console.log('📨 Received input:', input); // ← Check this
-        const { eventDetails, selectedUser } = input;
-        
+        // console.log('📨 Received input:', input); // ← Check this
+        console.log('📨 scheduleAndNotify received:', { eventDetails, selectedUser });
+
+        // const { eventDetails, selectedUser } = input;
+
     try {
       if (!eventDetails || !selectedUser || !selectedUser.email) {
         throw new Error('Missing required eventDetails or selectedUser');
