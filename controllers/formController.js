@@ -16,6 +16,9 @@ const submitForm = async (req, res) => {
   // }
 
   try {
+    
+    console.log('📦 Incoming event data:', req.body);
+
     const {
       firstName,
       lastName,
