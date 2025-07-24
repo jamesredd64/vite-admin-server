@@ -69,9 +69,12 @@ const submitForm = async (req, res) => {
     console.log("📦 description...", description);
     console.log("📦 location...", location);
 
+    const eventDet = eventDetails;
+    const selUser = selectedUser;
+
     console.log('📡 Calling scheduleAndNotify with:', {
-      eventDetails,
-      selectedUser: {
+      eventDet,
+      selUser: {
         email,
         name: `${firstName} ${lastName}`
       }
