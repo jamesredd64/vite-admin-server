@@ -40,8 +40,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {
       type: String,
-      enum: ["admin", "user", "manager", "super-admin"],
-      default: "user",
+      enum: ["admin", "showcase_attendee", "showcase_agent", "showcase_team", "showcase_admin"],
+      default: "showcase_attendee",
       required: false,
     },
     timezone: {

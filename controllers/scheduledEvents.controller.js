@@ -4,6 +4,7 @@ const User = require("../models/user"); // Import User model
 // 🔹 Get all scheduled events
 const getAllScheduledEvents = async (req, res) => {
   try {
+    console.log("Fetching all scheduled events with query: {}", {});
     const events = await ScheduledEvent.find({}).lean(); // Use .lean() for better performance
 
     // Collect all unique user emails from selectedUsers across all events

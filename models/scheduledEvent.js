@@ -31,11 +31,25 @@ if (mongoose.models.ScheduledEvent) {
       type: Date,
       default: Date.now
     }
-  }, { timestamps: true, autoIndex: false });
+  }, { 
+    timestamps: true, 
+    autoIndex: false,
+    collection: 'scheduledEvents' // Explicitly set the collection name
+  });
 
   // Add indexes for better query performance
   scheduledEventSchema.index({ status: 1, scheduledTime: 1 });
   scheduledEventSchema.index({ 'eventDetails.startTime': 1 });
+
+  // Middleware to log queries
+  scheduledEventSchema.pre('find', function() {
+    console.log('MongoDB Query:', {
+      query: this.getQuery(),
+      options: this.getOptions(),
+      fields: this._fields,
+      collection: this.mongooseCollection.name
+    });
+  });
 
   module.exports = mongoose.model('ScheduledEvent', scheduledEventSchema);
 }

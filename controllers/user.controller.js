@@ -264,7 +264,7 @@ const createOrUpdateUser = async (req, res) => {
       if (req.body.profile.dateOfBirth !== undefined) updateData['profile.dateOfBirth'] = req.body.profile.dateOfBirth;
       if (req.body.profile.profilePictureUrl !== undefined) updateData['profile.profilePictureUrl'] = req.body.profile.profilePictureUrl;
       // Set default role if not provided
-      updateData['profile.role'] = req.body.profile.role !== undefined ? req.body.profile.role : "user";
+      updateData['profile.role'] = req.body.profile.role !== undefined ? req.body.profile.role : "showcase_attendee";
       if (req.body.profile.timezone !== undefined) updateData['profile.timezone'] = req.body.profile.timezone;
       if (req.body.profile.gender !== undefined) updateData['profile.gender'] = req.body.profile.gender;
     } else {
@@ -272,9 +272,9 @@ const createOrUpdateUser = async (req, res) => {
        // This might depend on schema defaults, but explicit handling is safer
        const existingUser = await User.findOne({ email: req.body.email });
        if (existingUser && existingUser.profile && existingUser.profile.role === undefined) {
-           updateData['profile.role'] = "user";
+           updateData['profile.role'] = "showcase_attendee";
        } else if (!existingUser) {
-           updateData['profile.role'] = "user";
+           updateData['profile.role'] = "showcase_attendee";
        }
     }
 

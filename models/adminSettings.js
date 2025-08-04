@@ -4,7 +4,7 @@ const adminSettingsSchema = new mongoose.Schema({
   roleBasedAccess: [{
     role: {
       type: String,
-      enum: ['admin', 'user', 'manager', 'super-admin'],
+      enum: ['showcase_attendee' | 'showcase_agent' | 'showcase_team' | 'showcase_admin'],
       required: true
     },
     permissions: {
