@@ -82,3 +82,4 @@ routes/admin.js
 .env*.local
 
 routes/register-token
+.vercel
