@@ -44,7 +44,8 @@ const requireAdmin = async (req, res, next) => {
     // Log auth payload for debugging
     console.log('Auth payload:', req.auth?.payload);
 
-    const roles = req.auth?.payload['https://dev-rq8rokyotwtjem12.jr.com/roles/roles'];
+    const roles = req.auth?.payload['https://dev-rq8rokyotwtjem12.jr.com/roles'];
+    console.log("*********************Roles Array ", roles);
     // https://dev-uizu7j8qzflxzjpy.jr.com/roles
 
     // if (!roles || !Array.isArray(roles) || (!roles.includes('showcase_admin') && !roles.includes('super-admin'))) {
