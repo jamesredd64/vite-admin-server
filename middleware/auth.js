@@ -44,18 +44,36 @@ const requireAdmin = async (req, res, next) => {
     // Log auth payload for debugging
     console.log('Auth payload:', req.auth?.payload);
 
-    const roles = req.auth?.payload['https://dev-rq8rokyotwtjem12.jr.com/roles'];
-    console.log("*********************Roles Array ", roles);
-    // https://dev-uizu7j8qzflxzjpy.jr.com/roles
+    const rolesClaim = 'https://dev-rq8rokyotwtjem12.jr.com/roles';
+    const roles = req.auth?.payload?.[rolesClaim];
 
-    // if (!roles || !Array.isArray(roles) || (!roles.includes('showcase_admin') && !roles.includes('super-admin'))) {
-      if (!roles || !Array.isArray(roles) || (!roles.includes('showcase_admin') )) {
-      console.log('Forbidden - Admin access required. Roles:', roles);
+      console.log("🔍 Roles (raw):", JSON.stringify(roles, null, 2));
+      console.log("🔍 Type of roles:", typeof roles);
+      console.log("🔍 Is array:", Array.isArray(roles));
+    
+    console.log('🔍 Roles:', roles);
+    
+    const isAdmin = Array.isArray(roles)
+      ? roles.includes('showcase_admin')
+      : roles === 'showcase_admin';
+      
+      
+    
+    if (!isAdmin) {
       return res.status(403).json({
         success: false,
-        message: 'Forbidden - Admin access required'
+        message: 'Forbidden – Admin access required'
       });
     }
+    
+    // if (!roles || !Array.isArray(roles) || (!roles.includes('showcase_admin') && !roles.includes('super-admin'))) {
+      // if (!roles || !Array.isArray(roles) || (!roles.includes('showcase_admin') )) {
+      // console.log('Forbidden - Admin access required. Roles:', roles);
+      // return res.status(403).json({
+      //   success: false,
+      //   message: 'Forbidden - Admin access required'
+      // });
+    //}
 
     console.log('Admin access granted. Roles:', roles);
     next();
